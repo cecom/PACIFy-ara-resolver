@@ -1,0 +1,1318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="DeploymentService" targetNamespace="http://schemas.uc4.com/bond/2011-01/DeploymentService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://schemas.uc4.com/bond/2011-01/DeploymentService" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">
+    <wsp:Policy wsu:Id="BasicHttpBinding_DeploymentService_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:TransportToken>
+                            <wsp:Policy>
+                                <sp:HttpsToken RequireClientCertificate="false" />
+                            </wsp:Policy>
+                        </sp:TransportToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic256 />
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Strict />
+                            </wsp:Policy>
+                        </sp:Layout>
+                    </wsp:Policy>
+                </sp:TransportBinding>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsdl:types>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.uc4.com/bond/2011-01/DeploymentService" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+            <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+            <xs:element name="GetWebserviceVersion">
+                <xs:complexType>
+                    <xs:sequence />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetWebserviceVersionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetWebserviceVersionResult" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ExecuteApplicationWorkflow">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="pwd" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="workflowName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="appName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="packageName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="profileName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="startDate" nillable="true" type="xs:dateTime" />
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="needsManualStart" type="xs:boolean" />
+                        <xs:element minOccurs="0" name="manualConfirmer" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="installationMode" type="tns:InstallationMode" />
+                        <xs:element minOccurs="0" name="properties" nillable="true" type="tns:ArrayOfDynamicProperty" />
+                        <xs:element minOccurs="0" name="excludePackages" nillable="true" type="tns:ArrayOfExcludePackage" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:simpleType name="InstallationMode">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Skip" />
+                    <xs:enumeration value="Overwrite" />
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="InstallationMode" nillable="true" type="tns:InstallationMode" />
+            <xs:complexType name="ArrayOfDynamicProperty">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="DynamicProperty" nillable="true" type="tns:DynamicProperty" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfDynamicProperty" nillable="true" type="tns:ArrayOfDynamicProperty" />
+            <xs:complexType name="DynamicProperty">
+                <xs:sequence>
+                    <xs:element name="MainType" nillable="true" type="xs:string" />
+                    <xs:element name="EntityName" nillable="true" type="xs:string" />
+                    <xs:element name="FullName" nillable="true" type="xs:string" />
+                    <xs:element name="Value" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="DynamicProperty" nillable="true" type="tns:DynamicProperty" />
+            <xs:complexType name="ArrayOfExcludePackage">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ExcludePackage" nillable="true" type="tns:ExcludePackage" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfExcludePackage" nillable="true" type="tns:ArrayOfExcludePackage" />
+            <xs:complexType name="ExcludePackage">
+                <xs:sequence>
+                    <xs:element name="deploymentPackageName" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="targetName" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ExcludePackage" nillable="true" type="tns:ExcludePackage" />
+            <xs:element name="ExecuteApplicationWorkflowResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="ExecuteApplicationWorkflowResult" nillable="true" type="tns:ExecutionWorkflowResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ExecutionWorkflowResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="ExecutionId" type="xs:long" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ExecutionWorkflowResult" nillable="true" type="tns:ExecutionWorkflowResult" />
+            <xs:element name="ExecuteGeneralWorkflow">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="pwd" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="workflowName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="startDate" nillable="true" type="xs:dateTime" />
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="needsManualStart" type="xs:boolean" />
+                        <xs:element minOccurs="0" name="manualConfirmer" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="properties" nillable="true" type="tns:ArrayOfDynamicProperty" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ExecuteGeneralWorkflowResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="ExecuteGeneralWorkflowResult" nillable="true" type="tns:ExecutionWorkflowResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetPatchChainStates">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="applicationName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="deploymentPackageName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="deploymentProfileName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="installationMode" type="tns:InstallationMode" />
+                        <xs:element minOccurs="0" name="excludePackages" nillable="true" type="tns:ArrayOfExcludePackage" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetPatchChainStatesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetPatchChainStatesResult" nillable="true" type="tns:GetPatchChainStatesResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="GetPatchChainStatesResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="PackageInstallInfos" nillable="true" type="tns:ArrayOfPackageInstallInfo" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetPatchChainStatesResult" nillable="true" type="tns:GetPatchChainStatesResult" />
+            <xs:complexType name="ArrayOfPackageInstallInfo">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="PackageInstallInfo" nillable="true" type="tns:PackageInstallInfo" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfPackageInstallInfo" nillable="true" type="tns:ArrayOfPackageInstallInfo" />
+            <xs:complexType name="PackageInstallInfo">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="targetName" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="deploymentPackageName" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="deploymentPackageState" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="installState" type="tns:PackageInstallationState" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="PackageInstallInfo" nillable="true" type="tns:PackageInstallInfo" />
+            <xs:simpleType name="PackageInstallationState">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Overwrite">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="New">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">2</EnumerationValue>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="Skip">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">3</EnumerationValue>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="Installed">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">4</EnumerationValue>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="Skipped">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">5</EnumerationValue>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="Uninstall">
+                        <xs:annotation>
+                            <xs:appinfo>
+                                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">6</EnumerationValue>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:enumeration>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="PackageInstallationState" nillable="true" type="tns:PackageInstallationState" />
+            <xs:element name="RunQueue">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="triggerAuthenticationKey" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="RunQueueResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="RunQueueResult" nillable="true" type="tns:RunQueueResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="RunQueueResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="RunQueueResult" nillable="true" type="tns:RunQueueResult" />
+            <xs:element name="CreateActivitiesFromTemplate">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="pwd" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="activityTemplate" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="templateActivity" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="plannedStart" type="xs:dateTime" />
+                        <xs:element minOccurs="0" name="owner" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="folder" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="CreateActivitiesFromTemplateResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="CreateActivitiesFromTemplateResult" nillable="true" type="tns:ObjectsCreationResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ObjectsCreationResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="ObjectsId" nillable="true" type="q1:ArrayOflong" xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ObjectsCreationResult" nillable="true" type="tns:ObjectsCreationResult" />
+            <xs:element name="CreateDeploymentTargetsFromTemplate">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="pwd" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="templateTarget" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="targetNames" nillable="true" type="q2:ArrayOfstring" xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+                        <xs:element minOccurs="0" name="owner" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="folder" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="CreateDeploymentTargetsFromTemplateResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="CreateDeploymentTargetsFromTemplateResult" nillable="true" type="tns:ObjectsCreationResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetTypePermissions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="technicalName" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetTypePermissionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetTypePermissionsResult" nillable="true" type="tns:TypePermissionsResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="TypePermissionsResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="TypePermissions" nillable="true" type="tns:ArrayOfTypePermission" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="TypePermissionsResult" nillable="true" type="tns:TypePermissionsResult" />
+            <xs:complexType name="ArrayOfTypePermission">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="TypePermission" nillable="true" type="tns:TypePermission" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfTypePermission" nillable="true" type="tns:ArrayOfTypePermission" />
+            <xs:complexType name="TypePermission">
+                <xs:sequence>
+                    <xs:element name="Maintype" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="CustomType" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="Create" type="xs:boolean" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="TypePermission" nillable="true" type="tns:TypePermission" />
+            <xs:element name="GetComponentProperties">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="applicationName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="componentName" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetComponentPropertiesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetComponentPropertiesResult" nillable="true" type="tns:GetPropertiesResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="GetPropertiesResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="Properties" nillable="true" type="tns:ArrayOfDynamicPropertyInfo" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetPropertiesResult" nillable="true" type="tns:GetPropertiesResult" />
+            <xs:complexType name="ArrayOfDynamicPropertyInfo">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="DynamicPropertyInfo" nillable="true" type="tns:DynamicPropertyInfo" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfDynamicPropertyInfo" nillable="true" type="tns:ArrayOfDynamicPropertyInfo" />
+            <xs:complexType name="DynamicPropertyInfo">
+                <xs:sequence>
+                    <xs:element name="VariableName" nillable="true" type="xs:string" />
+                    <xs:element name="Description" nillable="true" type="xs:string" />
+                    <xs:element name="Protected" type="xs:boolean" />
+                    <xs:element name="Highlighted" type="xs:boolean" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="DynamicPropertyInfo" nillable="true" type="tns:DynamicPropertyInfo" />
+            <xs:element name="AddDeploymentTargetSnapshot">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="environmentSnapshotGuid" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="processRunId" type="xs:int" />
+                        <xs:element minOccurs="0" name="guid" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="hash" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="variables" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="componentId" type="xs:long" />
+                        <xs:element minOccurs="0" name="deploymentTargetId" type="xs:long" />
+                        <xs:element minOccurs="0" name="snapshotType" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="AddDeploymentTargetSnapshotResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="AddDeploymentTargetSnapshotResult" nillable="true" type="tns:ActionResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ActionResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ActionResult" nillable="true" type="tns:ActionResult" />
+            <xs:element name="AddDeploymentTargetSnapshotReport">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="reportId" type="xs:long" />
+                        <xs:element minOccurs="0" name="processRunId" type="xs:int" />
+                        <xs:element minOccurs="0" name="snapshotGuid" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="reportType" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="format" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="compression" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="xsltName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="status" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="data" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="AddDeploymentTargetSnapshotReportResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="AddDeploymentTargetSnapshotReportResult" nillable="true" type="tns:ActionResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UploadDetailCompareFile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="processRunId" type="xs:int" />
+                        <xs:element minOccurs="0" name="data" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UploadDetailCompareFileResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="UploadDetailCompareFileResult" nillable="true" type="tns:ActionResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ValidateEnvironmentSnapshots">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="environmentSnapshotIds" nillable="true" type="q3:ArrayOflong" xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ValidateEnvironmentSnapshotsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="ValidateEnvironmentSnapshotsResult" nillable="true" type="tns:EnvironmentSnapshotValidationResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="EnvironmentSnapshotValidationResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="ResultItems" nillable="true" type="tns:ArrayOfEnvironmentSnapshotValidationResultItem" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="EnvironmentSnapshotValidationResult" nillable="true" type="tns:EnvironmentSnapshotValidationResult" />
+            <xs:complexType name="ArrayOfEnvironmentSnapshotValidationResultItem">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="EnvironmentSnapshotValidationResultItem" nillable="true" type="tns:EnvironmentSnapshotValidationResultItem" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfEnvironmentSnapshotValidationResultItem" nillable="true" type="tns:ArrayOfEnvironmentSnapshotValidationResultItem" />
+            <xs:complexType name="EnvironmentSnapshotValidationResultItem">
+                <xs:sequence>
+                    <xs:element name="SnapshotId" type="xs:long" />
+                    <xs:element name="Message" nillable="true" type="xs:string" />
+                    <xs:element name="ReportId" type="xs:long" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="EnvironmentSnapshotValidationResultItem" nillable="true" type="tns:EnvironmentSnapshotValidationResultItem" />
+            <xs:element name="AssignComponentToDeploymentProfile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="deploymentProfileName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="applicationName" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="componentNames" nillable="true" type="q4:ArrayOfstring" xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="AssignComponentToDeploymentProfileResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="AssignComponentToDeploymentProfileResult" nillable="true" type="tns:DeploymentProfileTargetsResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="DeploymentProfileTargetsResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="Data" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="DeploymentProfileTargetsResult" nillable="true" type="tns:DeploymentProfileTargetsResult" />
+            <xs:element name="GetClientSettings">
+                <xs:complexType>
+                    <xs:sequence />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetClientSettingsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetClientSettingsResult" type="xs:long" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDeploymentDescriptor">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="runID" type="xs:int" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDeploymentDescriptorResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetDeploymentDescriptorResult" nillable="true" type="tns:DeploymentDescriptorResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="DeploymentDescriptorResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="DeploymentXML" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="DeploymentDescriptorResult" nillable="true" type="tns:DeploymentDescriptorResult" />
+            <xs:element name="GetApprovalRuleDefinitions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="language" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetApprovalRuleDefinitionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetApprovalRuleDefinitionsResult" nillable="true" type="tns:ApprovalRuleDefinitionsResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ApprovalRuleDefinitionsResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="ApprovalTypes" nillable="true" type="tns:ArrayOfApprovalTypeDefinition" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ApprovalRuleDefinitionsResult" nillable="true" type="tns:ApprovalRuleDefinitionsResult" />
+            <xs:complexType name="ArrayOfApprovalTypeDefinition">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ApprovalTypeDefinition" nillable="true" type="tns:ApprovalTypeDefinition" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfApprovalTypeDefinition" nillable="true" type="tns:ArrayOfApprovalTypeDefinition" />
+            <xs:complexType name="ApprovalTypeDefinition">
+                <xs:sequence>
+                    <xs:element name="Name" nillable="true" type="xs:string" />
+                    <xs:element name="Label" nillable="true" type="xs:string" />
+                    <xs:element name="Entities" nillable="true" type="tns:ArrayOfApprovalEntityDefinition" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ApprovalTypeDefinition" nillable="true" type="tns:ApprovalTypeDefinition" />
+            <xs:complexType name="ArrayOfApprovalEntityDefinition">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ApprovalEntityDefinition" nillable="true" type="tns:ApprovalEntityDefinition" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfApprovalEntityDefinition" nillable="true" type="tns:ArrayOfApprovalEntityDefinition" />
+            <xs:complexType name="ApprovalEntityDefinition">
+                <xs:sequence>
+                    <xs:element name="Name" nillable="true" type="xs:string" />
+                    <xs:element name="Properties" nillable="true" type="tns:ArrayOfApprovalPropertyDefinition" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ApprovalEntityDefinition" nillable="true" type="tns:ApprovalEntityDefinition" />
+            <xs:complexType name="ArrayOfApprovalPropertyDefinition">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ApprovalPropertyDefinition" nillable="true" type="tns:ApprovalPropertyDefinition" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfApprovalPropertyDefinition" nillable="true" type="tns:ArrayOfApprovalPropertyDefinition" />
+            <xs:complexType name="ApprovalPropertyDefinition">
+                <xs:sequence>
+                    <xs:element name="Name" nillable="true" type="xs:string" />
+                    <xs:element name="Label" nillable="true" type="xs:string" />
+                    <xs:element name="Operators" nillable="true" type="tns:ArrayOfApprovalOperatorDefinition" />
+                    <xs:element name="AllowedValues" nillable="true" type="tns:ArrayOfApprovalValueDefinition" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ApprovalPropertyDefinition" nillable="true" type="tns:ApprovalPropertyDefinition" />
+            <xs:complexType name="ArrayOfApprovalOperatorDefinition">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ApprovalOperatorDefinition" nillable="true" type="tns:ApprovalOperatorDefinition" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfApprovalOperatorDefinition" nillable="true" type="tns:ArrayOfApprovalOperatorDefinition" />
+            <xs:complexType name="ApprovalOperatorDefinition">
+                <xs:sequence>
+                    <xs:element name="Name" nillable="true" type="xs:string" />
+                    <xs:element name="Label" nillable="true" type="xs:string" />
+                    <xs:element name="ValueType" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ApprovalOperatorDefinition" nillable="true" type="tns:ApprovalOperatorDefinition" />
+            <xs:complexType name="ArrayOfApprovalValueDefinition">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="ApprovalValueDefinition" nillable="true" type="tns:ApprovalValueDefinition" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfApprovalValueDefinition" nillable="true" type="tns:ArrayOfApprovalValueDefinition" />
+            <xs:complexType name="ApprovalValueDefinition">
+                <xs:sequence>
+                    <xs:element name="Name" nillable="true" type="xs:string" />
+                    <xs:element name="Label" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ApprovalValueDefinition" nillable="true" type="tns:ApprovalValueDefinition" />
+            <xs:element name="GetApprovalRuleDefinitionsForUser">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="language" nillable="true" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetApprovalRuleDefinitionsForUserResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetApprovalRuleDefinitionsForUserResult" nillable="true" type="tns:ApprovalRuleDefinitionsResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetPromptProperties">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="secret" nillable="true" type="xs:string" />
+                        <xs:element minOccurs="0" name="operation" nillable="true" type="tns:GetPromptPropertiesOperation" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="GetPromptPropertiesOperation">
+                <xs:sequence>
+                    <xs:element name="type" type="tns:GetPromptPropertiesOperationType" />
+                    <xs:element name="workflowName" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="applicationName" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="deploymentPackageName" nillable="true" type="xs:string" />
+                    <xs:element minOccurs="0" name="deploymentProfileName" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetPromptPropertiesOperation" nillable="true" type="tns:GetPromptPropertiesOperation" />
+            <xs:simpleType name="GetPromptPropertiesOperationType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="ExecuteApplicationWorkflow" />
+                    <xs:enumeration value="ExecuteGeneralWorkflow" />
+                    <xs:enumeration value="CreatePackage" />
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="GetPromptPropertiesOperationType" nillable="true" type="tns:GetPromptPropertiesOperationType" />
+            <xs:element name="GetPromptPropertiesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetPromptPropertiesResult" nillable="true" type="tns:GetPromptPropertiesResult" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="GetPromptPropertiesResult">
+                <xs:sequence>
+                    <xs:element name="IsSuccess" type="xs:boolean" />
+                    <xs:element name="Message" nillable="true" type="xs:string" />
+                    <xs:element name="Properties" nillable="true" type="tns:ArrayOfPromptPropertyInfo" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetPromptPropertiesResult" nillable="true" type="tns:GetPromptPropertiesResult" />
+            <xs:complexType name="ArrayOfPromptPropertyInfo">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="PromptPropertyInfo" nillable="true" type="tns:PromptPropertyInfo" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfPromptPropertyInfo" nillable="true" type="tns:ArrayOfPromptPropertyInfo" />
+            <xs:complexType name="PromptPropertyInfo">
+                <xs:sequence>
+                    <xs:element name="mainType" nillable="true" type="xs:string" />
+                    <xs:element name="entityName" nillable="true" type="xs:string" />
+                    <xs:element name="propertyType" nillable="true" type="xs:string" />
+                    <xs:element name="fullName" nillable="true" type="xs:string" />
+                    <xs:element name="choices" nillable="true" type="xs:string" />
+                    <xs:element name="allowCustomValues" type="xs:boolean" />
+                    <xs:element name="referenceMainType" nillable="true" type="xs:string" />
+                    <xs:element name="caption" nillable="true" type="xs:string" />
+                    <xs:element name="description" nillable="true" type="xs:string" />
+                    <xs:element name="value" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="PromptPropertyInfo" nillable="true" type="tns:PromptPropertyInfo" />
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/">
+            <xs:element name="anyType" nillable="true" type="xs:anyType" />
+            <xs:element name="anyURI" nillable="true" type="xs:anyURI" />
+            <xs:element name="base64Binary" nillable="true" type="xs:base64Binary" />
+            <xs:element name="boolean" nillable="true" type="xs:boolean" />
+            <xs:element name="byte" nillable="true" type="xs:byte" />
+            <xs:element name="dateTime" nillable="true" type="xs:dateTime" />
+            <xs:element name="decimal" nillable="true" type="xs:decimal" />
+            <xs:element name="double" nillable="true" type="xs:double" />
+            <xs:element name="float" nillable="true" type="xs:float" />
+            <xs:element name="int" nillable="true" type="xs:int" />
+            <xs:element name="long" nillable="true" type="xs:long" />
+            <xs:element name="QName" nillable="true" type="xs:QName" />
+            <xs:element name="short" nillable="true" type="xs:short" />
+            <xs:element name="string" nillable="true" type="xs:string" />
+            <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte" />
+            <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt" />
+            <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong" />
+            <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort" />
+            <xs:element name="char" nillable="true" type="tns:char" />
+            <xs:simpleType name="char">
+                <xs:restriction base="xs:int" />
+            </xs:simpleType>
+            <xs:element name="duration" nillable="true" type="tns:duration" />
+            <xs:simpleType name="duration">
+                <xs:restriction base="xs:duration">
+                    <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?" />
+                    <xs:minInclusive value="-P10675199DT2H48M5.4775808S" />
+                    <xs:maxInclusive value="P10675199DT2H48M5.4775807S" />
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="guid" nillable="true" type="tns:guid" />
+            <xs:simpleType name="guid">
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}" />
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:attribute name="FactoryType" type="xs:QName" />
+            <xs:attribute name="Id" type="xs:ID" />
+            <xs:attribute name="Ref" type="xs:IDREF" />
+        </xs:schema>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+            <xs:complexType name="ArrayOflong">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="long" type="xs:long" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOflong" nillable="true" type="tns:ArrayOflong" />
+            <xs:complexType name="ArrayOfstring">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring" />
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="DeploymentService_GetWebserviceVersion_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetWebserviceVersion" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetWebserviceVersion_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetWebserviceVersionResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_ExecuteApplicationWorkflow_InputMessage">
+        <wsdl:part name="parameters" element="tns:ExecuteApplicationWorkflow" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_ExecuteApplicationWorkflow_OutputMessage">
+        <wsdl:part name="parameters" element="tns:ExecuteApplicationWorkflowResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_ExecuteGeneralWorkflow_InputMessage">
+        <wsdl:part name="parameters" element="tns:ExecuteGeneralWorkflow" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_ExecuteGeneralWorkflow_OutputMessage">
+        <wsdl:part name="parameters" element="tns:ExecuteGeneralWorkflowResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetPatchChainStates_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetPatchChainStates" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetPatchChainStates_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetPatchChainStatesResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_RunQueue_InputMessage">
+        <wsdl:part name="parameters" element="tns:RunQueue" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_RunQueue_OutputMessage">
+        <wsdl:part name="parameters" element="tns:RunQueueResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_CreateActivitiesFromTemplate_InputMessage">
+        <wsdl:part name="parameters" element="tns:CreateActivitiesFromTemplate" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_CreateActivitiesFromTemplate_OutputMessage">
+        <wsdl:part name="parameters" element="tns:CreateActivitiesFromTemplateResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_CreateDeploymentTargetsFromTemplate_InputMessage">
+        <wsdl:part name="parameters" element="tns:CreateDeploymentTargetsFromTemplate" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_CreateDeploymentTargetsFromTemplate_OutputMessage">
+        <wsdl:part name="parameters" element="tns:CreateDeploymentTargetsFromTemplateResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetTypePermissions_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetTypePermissions" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetTypePermissions_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetTypePermissionsResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetComponentProperties_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetComponentProperties" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetComponentProperties_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetComponentPropertiesResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_AddDeploymentTargetSnapshot_InputMessage">
+        <wsdl:part name="parameters" element="tns:AddDeploymentTargetSnapshot" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_AddDeploymentTargetSnapshot_OutputMessage">
+        <wsdl:part name="parameters" element="tns:AddDeploymentTargetSnapshotResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_AddDeploymentTargetSnapshotReport_InputMessage">
+        <wsdl:part name="parameters" element="tns:AddDeploymentTargetSnapshotReport" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_AddDeploymentTargetSnapshotReport_OutputMessage">
+        <wsdl:part name="parameters" element="tns:AddDeploymentTargetSnapshotReportResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_UploadDetailCompareFile_InputMessage">
+        <wsdl:part name="parameters" element="tns:UploadDetailCompareFile" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_UploadDetailCompareFile_OutputMessage">
+        <wsdl:part name="parameters" element="tns:UploadDetailCompareFileResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_ValidateEnvironmentSnapshots_InputMessage">
+        <wsdl:part name="parameters" element="tns:ValidateEnvironmentSnapshots" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_ValidateEnvironmentSnapshots_OutputMessage">
+        <wsdl:part name="parameters" element="tns:ValidateEnvironmentSnapshotsResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_AssignComponentToDeploymentProfile_InputMessage">
+        <wsdl:part name="parameters" element="tns:AssignComponentToDeploymentProfile" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_AssignComponentToDeploymentProfile_OutputMessage">
+        <wsdl:part name="parameters" element="tns:AssignComponentToDeploymentProfileResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetClientSettings_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetClientSettings" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetClientSettings_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetClientSettingsResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetDeploymentDescriptor_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetDeploymentDescriptor" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetDeploymentDescriptor_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetDeploymentDescriptorResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetApprovalRuleDefinitions_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetApprovalRuleDefinitions" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetApprovalRuleDefinitions_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetApprovalRuleDefinitionsResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetApprovalRuleDefinitionsForUser_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetApprovalRuleDefinitionsForUser" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetApprovalRuleDefinitionsForUser_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetApprovalRuleDefinitionsForUserResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetPromptProperties_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetPromptProperties" />
+    </wsdl:message>
+    <wsdl:message name="DeploymentService_GetPromptProperties_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetPromptPropertiesResponse" />
+    </wsdl:message>
+    <wsdl:portType name="DeploymentService">
+        <wsdl:operation name="GetWebserviceVersion">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetWebserviceVersion" message="tns:DeploymentService_GetWebserviceVersion_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetWebserviceVersionResponse" message="tns:DeploymentService_GetWebserviceVersion_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="ExecuteApplicationWorkflow">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ExecuteApplicationWorkflow" message="tns:DeploymentService_ExecuteApplicationWorkflow_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ExecuteApplicationWorkflowResponse" message="tns:DeploymentService_ExecuteApplicationWorkflow_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="ExecuteGeneralWorkflow">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ExecuteGeneralWorkflow" message="tns:DeploymentService_ExecuteGeneralWorkflow_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ExecuteGeneralWorkflowResponse" message="tns:DeploymentService_ExecuteGeneralWorkflow_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="GetPatchChainStates">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetPatchChainStates" message="tns:DeploymentService_GetPatchChainStates_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetPatchChainStatesResponse" message="tns:DeploymentService_GetPatchChainStates_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="RunQueue">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/RunQueue" message="tns:DeploymentService_RunQueue_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/RunQueueResponse" message="tns:DeploymentService_RunQueue_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="CreateActivitiesFromTemplate">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/CreateActivitiesFromTemplate" message="tns:DeploymentService_CreateActivitiesFromTemplate_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/CreateActivitiesFromTemplateResponse" message="tns:DeploymentService_CreateActivitiesFromTemplate_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="CreateDeploymentTargetsFromTemplate">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/CreateDeploymentTargetsFromTemplate" message="tns:DeploymentService_CreateDeploymentTargetsFromTemplate_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/CreateDeploymentTargetsFromTemplateResponse" message="tns:DeploymentService_CreateDeploymentTargetsFromTemplate_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="GetTypePermissions">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetTypePermissions" message="tns:DeploymentService_GetTypePermissions_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetTypePermissionsResponse" message="tns:DeploymentService_GetTypePermissions_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="GetComponentProperties">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetComponentProperties" message="tns:DeploymentService_GetComponentProperties_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetComponentPropertiesResponse" message="tns:DeploymentService_GetComponentProperties_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="AddDeploymentTargetSnapshot">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AddDeploymentTargetSnapshot" message="tns:DeploymentService_AddDeploymentTargetSnapshot_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AddDeploymentTargetSnapshotResponse" message="tns:DeploymentService_AddDeploymentTargetSnapshot_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="AddDeploymentTargetSnapshotReport">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AddDeploymentTargetSnapshotReport" message="tns:DeploymentService_AddDeploymentTargetSnapshotReport_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AddDeploymentTargetSnapshotReportResponse" message="tns:DeploymentService_AddDeploymentTargetSnapshotReport_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="UploadDetailCompareFile">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/UploadDetailCompareFile" message="tns:DeploymentService_UploadDetailCompareFile_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/UploadDetailCompareFileResponse" message="tns:DeploymentService_UploadDetailCompareFile_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="ValidateEnvironmentSnapshots">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ValidateEnvironmentSnapshots" message="tns:DeploymentService_ValidateEnvironmentSnapshots_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ValidateEnvironmentSnapshotsResponse" message="tns:DeploymentService_ValidateEnvironmentSnapshots_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="AssignComponentToDeploymentProfile">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AssignComponentToDeploymentProfile" message="tns:DeploymentService_AssignComponentToDeploymentProfile_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AssignComponentToDeploymentProfileResponse" message="tns:DeploymentService_AssignComponentToDeploymentProfile_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="GetClientSettings">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetClientSettings" message="tns:DeploymentService_GetClientSettings_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetClientSettingsResponse" message="tns:DeploymentService_GetClientSettings_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="GetDeploymentDescriptor">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetDeploymentDescriptor" message="tns:DeploymentService_GetDeploymentDescriptor_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetDeploymentDescriptorResponse" message="tns:DeploymentService_GetDeploymentDescriptor_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="GetApprovalRuleDefinitions">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetApprovalRuleDefinitions" message="tns:DeploymentService_GetApprovalRuleDefinitions_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetApprovalRuleDefinitionsResponse" message="tns:DeploymentService_GetApprovalRuleDefinitions_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="GetApprovalRuleDefinitionsForUser">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetApprovalRuleDefinitionsForUser" message="tns:DeploymentService_GetApprovalRuleDefinitionsForUser_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetApprovalRuleDefinitionsForUserResponse" message="tns:DeploymentService_GetApprovalRuleDefinitionsForUser_OutputMessage" />
+        </wsdl:operation>
+        <wsdl:operation name="GetPromptProperties">
+            <wsdl:input wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetPromptProperties" message="tns:DeploymentService_GetPromptProperties_InputMessage" />
+            <wsdl:output wsaw:Action="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetPromptPropertiesResponse" message="tns:DeploymentService_GetPromptProperties_OutputMessage" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BasicHttpBinding_DeploymentService" type="tns:DeploymentService">
+        <wsp:PolicyReference URI="#BasicHttpBinding_DeploymentService_policy" />
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="GetWebserviceVersion">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetWebserviceVersion" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ExecuteApplicationWorkflow">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ExecuteApplicationWorkflow" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ExecuteGeneralWorkflow">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ExecuteGeneralWorkflow" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetPatchChainStates">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetPatchChainStates" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RunQueue">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/RunQueue" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CreateActivitiesFromTemplate">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/CreateActivitiesFromTemplate" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CreateDeploymentTargetsFromTemplate">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/CreateDeploymentTargetsFromTemplate" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetTypePermissions">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetTypePermissions" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetComponentProperties">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetComponentProperties" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AddDeploymentTargetSnapshot">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AddDeploymentTargetSnapshot" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AddDeploymentTargetSnapshotReport">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AddDeploymentTargetSnapshotReport" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="UploadDetailCompareFile">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/UploadDetailCompareFile" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ValidateEnvironmentSnapshots">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ValidateEnvironmentSnapshots" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AssignComponentToDeploymentProfile">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AssignComponentToDeploymentProfile" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetClientSettings">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetClientSettings" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetDeploymentDescriptor">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetDeploymentDescriptor" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetApprovalRuleDefinitions">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetApprovalRuleDefinitions" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetApprovalRuleDefinitionsForUser">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetApprovalRuleDefinitionsForUser" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetPromptProperties">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetPromptProperties" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="BasicHttpBinding_DeploymentService1" type="tns:DeploymentService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="GetWebserviceVersion">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetWebserviceVersion" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ExecuteApplicationWorkflow">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ExecuteApplicationWorkflow" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ExecuteGeneralWorkflow">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ExecuteGeneralWorkflow" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetPatchChainStates">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetPatchChainStates" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RunQueue">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/RunQueue" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CreateActivitiesFromTemplate">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/CreateActivitiesFromTemplate" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CreateDeploymentTargetsFromTemplate">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/CreateDeploymentTargetsFromTemplate" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetTypePermissions">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetTypePermissions" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetComponentProperties">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetComponentProperties" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AddDeploymentTargetSnapshot">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AddDeploymentTargetSnapshot" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AddDeploymentTargetSnapshotReport">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AddDeploymentTargetSnapshotReport" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="UploadDetailCompareFile">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/UploadDetailCompareFile" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ValidateEnvironmentSnapshots">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/ValidateEnvironmentSnapshots" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AssignComponentToDeploymentProfile">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/AssignComponentToDeploymentProfile" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetClientSettings">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetClientSettings" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetDeploymentDescriptor">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetDeploymentDescriptor" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetApprovalRuleDefinitions">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetApprovalRuleDefinitions" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetApprovalRuleDefinitionsForUser">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetApprovalRuleDefinitionsForUser" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetPromptProperties">
+            <soap:operation soapAction="http://schemas.uc4.com/bond/2011-01/DeploymentService/DeploymentService/GetPromptProperties" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="DeploymentService">
+        <wsdl:port name="BasicHttpBinding_DeploymentService" binding="tns:BasicHttpBinding_DeploymentService">
+            <soap:address location="https://example.org/service/DeploymentService.svc" />
+        </wsdl:port>
+        <wsdl:port name="BasicHttpBinding_DeploymentService1" binding="tns:BasicHttpBinding_DeploymentService1">
+            <soap:address location="http://example.org/service/DeploymentService.svc" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

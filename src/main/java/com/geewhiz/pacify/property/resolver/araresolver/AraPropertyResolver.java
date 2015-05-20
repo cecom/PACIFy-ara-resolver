@@ -1,0 +1,272 @@
+package com.geewhiz.pacify.property.resolver.araresolver;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+
+import org.apache.commons.codec.binary.Base64;
+import org.xmlbeam.XBProjector;
+
+import com.geewhiz.pacify.defect.Defect;
+import com.geewhiz.pacify.property.resolver.araresolver.AraData.Variable;
+import com.geewhiz.pacify.resolver.BasePropertyResolver;
+import com.marzapower.loggable.Log;
+import com.marzapower.loggable.Loggable;
+import com.uc4.ara.feature.utils.Maxim;
+import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentDescriptorResult;
+import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentService;
+import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentService_Service;
+
+@Loggable(loggerName = "com.geewhiz.pacify")
+public class AraPropertyResolver extends BasePropertyResolver {
+
+    private static final String SERVICE_NAME = "service/DeploymentService.svc";
+
+    private String              araUrl;
+    private String              userName;
+    private String              password;
+    private Integer             runId;
+    private String              target;
+    private String              component;
+    private String              namespace;
+
+    private boolean             initilized   = false;
+    private AraData             araData;
+
+    private Boolean             decodePasswortWithBase64;
+
+    public AraPropertyResolver() {
+    }
+
+    private synchronized void initialize() {
+        if (isInitilized()) {
+            return;
+        }
+
+        if (araUrl == null) {
+            throw new IllegalArgumentException("Ara URL is null!");
+        }
+
+        if (userName == null) {
+            throw new IllegalArgumentException("Ara Username is null!");
+        }
+
+        if (password == null) {
+            throw new IllegalArgumentException("Ara User Password is null!");
+        }
+
+        if (runId == null) {
+            throw new IllegalArgumentException("Ara Run Id is null!");
+        }
+
+        if (target == null) {
+            throw new IllegalArgumentException("Ara Target is null!");
+        }
+
+        if (component == null) {
+            throw new IllegalArgumentException("Ara Component is null!");
+        }
+
+        if (namespace == null) {
+            throw new IllegalArgumentException("Ara Namespace is null!");
+        }
+
+        if (decodePasswortWithBase64 == null) {
+            throw new IllegalArgumentException("Ara decodePasswortWithBase64 is null!");
+        }
+
+        QName qname = new QName("http://schemas.uc4.com/bond/2011-01/DeploymentService", "DeploymentService");
+        URL wsdl = AraPropertyResolver.class.getResource("/DeploymentService.wsdl");
+
+        DeploymentService_Service serviceFactory = new DeploymentService_Service(wsdl, qname);
+
+        DeploymentService webservice = serviceFactory.getBasicHttpBindingDeploymentService();
+        BindingProvider bp = (BindingProvider) webservice;
+        bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, araUrl + "/" + SERVICE_NAME);
+
+        DeploymentDescriptorResult result = webservice.getDeploymentDescriptor(userName, password, runId);
+        if (!result.isIsSuccess()) {
+            throw new RuntimeException("Result is not successful!\n" + result.getMessage().getValue());
+        }
+
+        Log.get().debug("Webservice response:");
+        Log.get().debug(result.getDeploymentXML().getValue());
+
+        setAraData(new XBProjector().onXMLString(result.getDeploymentXML().getValue()).createProjection(
+                AraData.class));
+
+        setInitilized(true);
+    }
+
+    public boolean containsProperty(String property) {
+        initialize();
+
+        return getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property) != null;
+    }
+
+    public String getPropertyValue(String property) {
+        initialize();
+
+        String value = getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property).getValue();
+        if (getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property).isEncrypted()) {
+            String araDecoded = Maxim.deMaxim(value);
+            if (isDecodePasswortWithBase64()) {
+                try {
+                    return new String(Base64.decodeBase64(araDecoded), getEncoding());
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("Error while decoding passwort", e);
+                }
+            }
+        }
+        return value;
+    }
+
+    public Set<String> getProperties() {
+        initialize();
+
+        Set<String> result = new TreeSet<String>();
+
+        List<Variable> variables = getAraData().getTask(component).getGenerateTask(target).getVariables(namespace);
+        for (Variable variable : variables) {
+            String name = variable.getName();
+            String nameWithoutNamespace = name.substring(namespace.length() + 1);
+            result.add(nameWithoutNamespace);
+        }
+
+        return result;
+    }
+
+    public String getEncoding() {
+        return "utf-8";
+    }
+
+    public String getPropertyResolverDescription() {
+        return "ARA";
+    }
+
+    public List<Defect> checkForDuplicateEntry() {
+        return Collections.emptyList();
+    }
+
+    public String getBeginToken() {
+        return "@";
+    }
+
+    public String getEndToken() {
+        return "@";
+    }
+
+    public String getAraUrl() {
+        return araUrl;
+    }
+
+    public void setAraUrl(String araUrl) {
+        this.araUrl = araUrl;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Integer getRunId() {
+        return runId;
+    }
+
+    public void setRunId(Integer runId) {
+        this.runId = runId;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    protected boolean isInitilized() {
+        return initilized;
+    }
+
+    protected void setInitilized(boolean initilized) {
+        this.initilized = initilized;
+    }
+
+    public AraData getAraData() {
+        return araData;
+    }
+
+    protected void setAraData(AraData araData) {
+        this.araData = araData;
+    }
+
+    @Override
+    public boolean propertyUsesToken(String property) {
+        if (getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property).isEncrypted()) {
+            return false;
+        }
+        return super.propertyUsesToken(property);
+    }
+
+    public void setDecodePasswortWithBase64(Boolean decodePasswortWithBase64) {
+        this.decodePasswortWithBase64 = decodePasswortWithBase64;
+    }
+
+    public Boolean isDecodePasswortWithBase64() {
+        return decodePasswortWithBase64;
+    }
+
+}
