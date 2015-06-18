@@ -30,20 +30,21 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xmlbeam.XBProjector;
 
 import com.geewhiz.pacify.defect.Defect;
 import com.geewhiz.pacify.property.resolver.araresolver.AraData.Variable;
 import com.geewhiz.pacify.resolver.BasePropertyResolver;
-import com.marzapower.loggable.Log;
-import com.marzapower.loggable.Loggable;
 import com.uc4.ara.feature.utils.Maxim;
 import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentDescriptorResult;
 import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentService;
 import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentService_Service;
 
-@Loggable(loggerName = "com.geewhiz.pacify")
 public class AraPropertyResolver extends BasePropertyResolver {
+
+    private Logger              logger       = LogManager.getLogger(AraPropertyResolver.class.getName());
 
     private static final String SERVICE_NAME = "service/DeploymentService.svc";
 
@@ -114,8 +115,8 @@ public class AraPropertyResolver extends BasePropertyResolver {
             throw new RuntimeException("Result is not successful!\n" + result.getMessage().getValue());
         }
 
-        Log.get().debug("Webservice response:");
-        Log.get().debug(result.getDeploymentXML().getValue());
+        logger.debug("Webservice response:");
+        logger.debug(result.getDeploymentXML().getValue());
 
         setAraData(new XBProjector().onXMLString(result.getDeploymentXML().getValue()).createProjection(
                 AraData.class));
