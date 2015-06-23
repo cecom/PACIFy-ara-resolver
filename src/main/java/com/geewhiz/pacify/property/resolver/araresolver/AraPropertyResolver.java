@@ -35,6 +35,8 @@ import org.apache.logging.log4j.Logger;
 import org.xmlbeam.XBProjector;
 
 import com.geewhiz.pacify.defect.Defect;
+import com.geewhiz.pacify.property.resolver.araresolver.AraData.GenerateTask;
+import com.geewhiz.pacify.property.resolver.araresolver.AraData.Task;
 import com.geewhiz.pacify.property.resolver.araresolver.AraData.Variable;
 import com.geewhiz.pacify.resolver.BasePropertyResolver;
 import com.uc4.ara.feature.utils.Maxim;
@@ -60,6 +62,9 @@ public class AraPropertyResolver extends BasePropertyResolver {
     private AraData             araData;
 
     private Boolean             decodePasswordWithBase64;
+
+    private String              beginToken;
+    private String              endToken;
 
     public AraPropertyResolver() {
     }
@@ -127,14 +132,21 @@ public class AraPropertyResolver extends BasePropertyResolver {
     public boolean containsProperty(String property) {
         initialize();
 
-        return getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property) != null;
+        Variable variable = getVariable(property);
+
+        return variable != null;
     }
 
     public String getPropertyValue(String property) {
         initialize();
 
-        String value = getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property).getValue();
-        if (getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property).isEncrypted()) {
+        Variable variable = getVariable(property);
+        if (variable == null) {
+            return null;
+        }
+
+        String value = variable.getValue();
+        if (variable.isEncrypted()) {
             String araDecoded = Maxim.deMaxim(value);
             if (isDecodePasswordWithBase64()) {
                 try {
@@ -147,12 +159,37 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return value;
     }
 
+    private Variable getVariable(String property) {
+        Task task = getAraData().getTask(component);
+        if (task == null) {
+            throw new IllegalArgumentException("Couldn't find component [" + component + "]");
+        }
+
+        GenerateTask generateTask = task.getGenerateTask(target);
+        if (generateTask == null) {
+            throw new IllegalArgumentException("Couldn't find target [" + target + "]");
+        }
+
+        Variable variable = generateTask.getVariable(namespace, property);
+        return variable;
+    }
+
     public Set<String> getProperties() {
         initialize();
 
         Set<String> result = new TreeSet<String>();
 
-        List<Variable> variables = getAraData().getTask(component).getGenerateTask(target).getVariables(namespace);
+        Task task = getAraData().getTask(component);
+        if (task == null) {
+            throw new IllegalArgumentException("Couldn't find component [" + component + "]");
+        }
+
+        GenerateTask generateTask = task.getGenerateTask(target);
+        if (generateTask == null) {
+            throw new IllegalArgumentException("Couldn't find target [" + target + "]");
+        }
+
+        List<Variable> variables = generateTask.getVariables(namespace);
         for (Variable variable : variables) {
             String name = variable.getName();
             String nameWithoutNamespace = name.substring(namespace.length() + 1);
@@ -175,11 +212,11 @@ public class AraPropertyResolver extends BasePropertyResolver {
     }
 
     public String getBeginToken() {
-        return "@";
+        return beginToken;
     }
 
     public String getEndToken() {
-        return "@";
+        return endToken;
     }
 
     public String getAraUrl() {
@@ -256,7 +293,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
     @Override
     public boolean propertyUsesToken(String property) {
-        if (getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property).isEncrypted()) {
+        if (getVariable(property).isEncrypted()) {
             return false;
         }
         return super.propertyUsesToken(property);
@@ -268,6 +305,14 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
     public Boolean isDecodePasswordWithBase64() {
         return decodePasswordWithBase64;
+    }
+
+    public void setBeginToken(String beginToken) {
+        this.beginToken = beginToken;
+    }
+
+    public void setEndToken(String endToken) {
+        this.endToken = endToken;
     }
 
 }

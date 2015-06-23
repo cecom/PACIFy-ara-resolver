@@ -55,6 +55,8 @@ public class AraPropertyResolverModule extends PropertyResolverModule {
         String target = commandLineParameters.get("target");
         String component = commandLineParameters.get("component");
         String namespace = commandLineParameters.get("namespace");
+        String beginToken = commandLineParameters.get("beginToken");
+        String endToken = commandLineParameters.get("endToken");
         Boolean decodePasswordWithBase64 = Boolean.parseBoolean(commandLineParameters.get("decodePasswordWithBase64"));
 
         checkNotNull(araUrl, "araUrl is null! Please specify it via -DAraResolver.araUrl=<url>");
@@ -74,6 +76,8 @@ public class AraPropertyResolverModule extends PropertyResolverModule {
         araPropertyResolver.setComponent(component);
         araPropertyResolver.setNamespace(namespace);
         araPropertyResolver.setDecodePasswordWithBase64(decodePasswordWithBase64);
+        araPropertyResolver.setBeginToken(beginToken == null ? "@" : beginToken);
+        araPropertyResolver.setEndToken(endToken == null ? "@" : endToken);
 
         return araPropertyResolver;
     }
