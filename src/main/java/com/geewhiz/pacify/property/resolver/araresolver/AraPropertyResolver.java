@@ -59,7 +59,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
     private boolean             initilized   = false;
     private AraData             araData;
 
-    private Boolean             decodePasswortWithBase64;
+    private Boolean             decodePasswordWithBase64;
 
     public AraPropertyResolver() {
     }
@@ -97,7 +97,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
             throw new IllegalArgumentException("Ara Namespace is null!");
         }
 
-        if (decodePasswortWithBase64 == null) {
+        if (decodePasswordWithBase64 == null) {
             throw new IllegalArgumentException("Ara decodePasswortWithBase64 is null!");
         }
 
@@ -136,7 +136,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         String value = getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property).getValue();
         if (getAraData().getTask(component).getGenerateTask(target).getVariable(namespace, property).isEncrypted()) {
             String araDecoded = Maxim.deMaxim(value);
-            if (isDecodePasswortWithBase64()) {
+            if (isDecodePasswordWithBase64()) {
                 try {
                     return new String(Base64.decodeBase64(araDecoded), getEncoding());
                 } catch (UnsupportedEncodingException e) {
@@ -262,12 +262,12 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return super.propertyUsesToken(property);
     }
 
-    public void setDecodePasswortWithBase64(Boolean decodePasswortWithBase64) {
-        this.decodePasswortWithBase64 = decodePasswortWithBase64;
+    public void setDecodePasswordWithBase64(Boolean decodePasswordWithBase64) {
+        this.decodePasswordWithBase64 = decodePasswordWithBase64;
     }
 
-    public Boolean isDecodePasswortWithBase64() {
-        return decodePasswortWithBase64;
+    public Boolean isDecodePasswordWithBase64() {
+        return decodePasswordWithBase64;
     }
 
 }

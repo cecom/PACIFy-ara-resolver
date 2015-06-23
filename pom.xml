@@ -77,6 +77,22 @@
                 </executions>
             </plugin>
 
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <finalName>ara-resolver-shaded-${project.version}</finalName>
+                        </configuration>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -122,41 +138,42 @@
         </pluginManagement>
     </build>
     <dependencies>
-        <dependency>
-            <groupId>com.geewhiz.pacify</groupId>
-            <artifactId>pacify.impl</artifactId>
-            <version>${pacify.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.geewhiz.pacify</groupId>
-            <artifactId>pacify.common</artifactId>
-            <version>${pacify.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.geewhiz.pacify</groupId>
-            <artifactId>pacify.commandline</artifactId>
-            <version>${pacify.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.inject.extensions</groupId>
-            <artifactId>guice-multibindings</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-rt</artifactId>
-            <version>2.2.8</version>
-        </dependency>
-        <dependency>
+		<dependency>
             <groupId>org.xmlbeam</groupId>
             <artifactId>xmlprojector</artifactId>
             <version>1.4.7</version>
         </dependency>
+		<!-- this dependencies will be provided by ara -->
         <dependency>
             <groupId>aratools</groupId>
             <artifactId>aratools</artifactId>
             <version>x.y.z</version>
             <scope>system</scope>
             <systemPath>c:/tmp/ara-resolver/ARATools.jar</systemPath>
+        </dependency>
+		<!-- this dependencies are included in pacify -->
+        <dependency>
+            <groupId>com.geewhiz.pacify</groupId>
+            <artifactId>pacify.impl</artifactId>
+            <version>${pacify.version}</version>
+			<scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.geewhiz.pacify</groupId>
+            <artifactId>pacify.common</artifactId>
+            <version>${pacify.version}</version>
+			<scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.geewhiz.pacify</groupId>
+            <artifactId>pacify.commandline</artifactId>
+            <version>${pacify.version}</version>
+			<scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-multibindings</artifactId>
+			<scope>provided</scope>
         </dependency>
         <!-- TEST Dependencies -->
         <dependency>
