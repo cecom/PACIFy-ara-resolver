@@ -27,9 +27,12 @@ public interface AraData {
 
     interface Variable {
         @XBRead("@name")
+        String getInternalName();
+
+        @XBRead("substring-before(@value, '=>')")
         String getName();
 
-        @XBRead("@value")
+        @XBRead("substring-after(@value, '=>')")
         String getValue();
 
         @XBRead("boolean(@isEncrypted)")
@@ -43,13 +46,13 @@ public interface AraData {
         @XBRead("./variables/variable")
         List<Variable> getVariables();
 
-        @XBRead("./variables/variable[starts-with(@name,'{0}')]")
+        @XBRead("./variables/variable[starts-with(@name,'{0}') and contains(@value, '=>')]")
         List<Variable> getVariables(String forNamespace);
 
-        @XBRead("./variables/variable[@name='{0}']")
+        @XBRead("./variables/variable[starts-with(@value,'{0}=>')]")
         Variable getVariable(String variable);
 
-        @XBRead("./variables/variable[starts-with(@name,'{0}') and '{1}' = substring(@name, string-length(@name) - string-length('{1}') + 1)]")
+        @XBRead("./variables/variable[starts-with(@name,'{0}') and starts-with(@value,'{1}=>')]")
         Variable getVariable(String forNamespace, String variable);
     }
 

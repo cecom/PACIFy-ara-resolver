@@ -191,9 +191,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
         List<Variable> variables = generateTask.getVariables(namespace);
         for (Variable variable : variables) {
-            String name = variable.getName();
-            String nameWithoutNamespace = name.substring(namespace.length() + 1);
-            result.add(nameWithoutNamespace);
+            result.add(variable.getName());
         }
 
         return result;
