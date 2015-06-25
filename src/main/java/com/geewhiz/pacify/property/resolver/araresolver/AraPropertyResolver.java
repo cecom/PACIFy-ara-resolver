@@ -240,7 +240,11 @@ public class AraPropertyResolver extends BasePropertyResolver {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        if (password != null && password.startsWith("--10")) {
+            this.password = Maxim.deMaxim(password);
+        } else {
+            this.password = password;
+        }
     }
 
     public Integer getRunId() {

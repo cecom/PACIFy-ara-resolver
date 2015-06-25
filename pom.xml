@@ -6,6 +6,29 @@
     <version>develop</version>
     <name>com.geewhiz.pacify.resolver.ara-resolver</name>
     <packaging>jar</packaging>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Sven Oppermann</name>
+            <email>sven.oppermann@gmail.com</email>
+            <roles>
+                <role>Lead Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/cecom/PACIFy-ara-resolver</connection>
+    </scm>
+
     <properties>
         <pacify.version>develop</pacify.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -78,7 +101,7 @@
                 </executions>
             </plugin>
 
-			<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.3</version>
@@ -101,6 +124,38 @@
                 <version>2.4.2</version>
                 <configuration>
                     <jvm>C:\Program Files (x86)\Java\jre1.6.0\bin\java.exe</jvm>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <doCheck>true</doCheck>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <GIT-BRANCH>${scmBranch}</GIT-BRANCH>
+                            <GIT-SHA1>${buildNumber}</GIT-SHA1>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
@@ -141,12 +196,12 @@
         </pluginManagement>
     </build>
     <dependencies>
-		<dependency>
+        <dependency>
             <groupId>org.xmlbeam</groupId>
             <artifactId>xmlprojector</artifactId>
             <version>1.4.7</version>
         </dependency>
-		<!-- this dependencies will be provided by ara -->
+        <!-- this dependencies will be provided by ara -->
         <dependency>
             <groupId>aratools</groupId>
             <artifactId>aratools</artifactId>
@@ -154,29 +209,29 @@
             <scope>system</scope>
             <systemPath>c:/tmp/ara-resolver/ARATools.jar</systemPath>
         </dependency>
-		<!-- this dependencies are included in pacify -->
+        <!-- this dependencies are included in pacify -->
         <dependency>
             <groupId>com.geewhiz.pacify</groupId>
             <artifactId>pacify.impl</artifactId>
             <version>${pacify.version}</version>
-			<scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.geewhiz.pacify</groupId>
             <artifactId>pacify.common</artifactId>
             <version>${pacify.version}</version>
-			<scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.geewhiz.pacify</groupId>
             <artifactId>pacify.commandline</artifactId>
             <version>${pacify.version}</version>
-			<scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-multibindings</artifactId>
-			<scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <!-- TEST Dependencies -->
         <dependency>
