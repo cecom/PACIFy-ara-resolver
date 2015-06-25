@@ -111,13 +111,15 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
         DeploymentService_Service serviceFactory = new DeploymentService_Service(wsdl, qname);
 
+        logger.debug("Webservice endpoint: {}", araUrl + "/" + SERVICE_NAME);
+
         DeploymentService webservice = serviceFactory.getBasicHttpBindingDeploymentService();
         BindingProvider bp = (BindingProvider) webservice;
         bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, araUrl + "/" + SERVICE_NAME);
 
         DeploymentDescriptorResult result = webservice.getDeploymentDescriptor(userName, password, runId);
         if (!result.isIsSuccess()) {
-            throw new RuntimeException("Result is not successful!\n" + result.getMessage().getValue());
+            throw new RuntimeException("Webservice call wasn't successful!\n" + result.getMessage().getValue());
         }
 
         logger.debug("Webservice response:");
@@ -140,6 +142,8 @@ public class AraPropertyResolver extends BasePropertyResolver {
     public String getPropertyValue(String property) {
         initialize();
 
+        logger.debug("Getting property value for [{}]", property);
+
         Variable variable = getVariable(property);
         if (variable == null) {
             return null;
@@ -147,8 +151,11 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
         String value = variable.getValue();
         if (variable.isEncrypted()) {
+            logger.debug("Property is encrypted. Decrypting.");
+
             String araDecoded = Maxim.deMaxim(value);
             if (isDecodePasswordWithBase64()) {
+                logger.debug("Property is base64 encryped. Decrypting.");
                 try {
                     return new String(Base64.decodeBase64(araDecoded), getEncoding());
                 } catch (UnsupportedEncodingException e) {

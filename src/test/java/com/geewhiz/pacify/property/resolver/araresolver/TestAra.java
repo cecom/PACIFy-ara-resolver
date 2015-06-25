@@ -3,9 +3,14 @@ package com.geewhiz.pacify.property.resolver.araresolver;
 import java.io.IOException;
 import java.util.Set;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xmlbeam.XBProjector;
+
+import com.geewhiz.pacify.utils.LoggingUtils;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,6 +35,9 @@ public class TestAra {
 
     @Test
     public void readTest() throws IOException {
+        Logger logger = LogManager.getLogger(TestAra.class.getName());
+        LoggingUtils.setLogLevel(logger, Level.DEBUG);
+
         AraPropertyResolver araPropertyResolver = new AraPropertyResolver();
 
         araPropertyResolver.setInitilized(true);
