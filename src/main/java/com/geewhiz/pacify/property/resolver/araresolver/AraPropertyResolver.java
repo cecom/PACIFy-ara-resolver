@@ -187,7 +187,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return variable;
     }
 
-    public Set<String> getProperties() {
+    public Set<String> getPropertyKeys() {
         initialize();
 
         Set<String> result = new TreeSet<String>();
