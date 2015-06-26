@@ -323,10 +323,16 @@ public class AraPropertyResolver extends BasePropertyResolver {
     }
 
     public void setBeginToken(String beginToken) {
+        if (beginToken == null || beginToken.length() == 0) {
+            throw new IllegalArgumentException("beginToken can't be null");
+        }
         this.beginToken = beginToken;
     }
 
     public void setEndToken(String endToken) {
+        if (endToken == null || endToken.length() == 0) {
+            throw new IllegalArgumentException("endToken can't be null");
+        }
         this.endToken = endToken;
     }
 
