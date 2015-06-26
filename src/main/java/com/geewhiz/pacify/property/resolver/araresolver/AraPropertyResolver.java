@@ -35,9 +35,12 @@ import org.apache.logging.log4j.Logger;
 import org.xmlbeam.XBProjector;
 
 import com.geewhiz.pacify.defect.Defect;
-import com.geewhiz.pacify.property.resolver.araresolver.AraData.GenerateTask;
-import com.geewhiz.pacify.property.resolver.araresolver.AraData.Task;
-import com.geewhiz.pacify.property.resolver.araresolver.AraData.Variable;
+import com.geewhiz.pacify.property.resolver.araresolver.model.AraData;
+import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.GenerateTask;
+import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Task;
+import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Variable;
+import com.geewhiz.pacify.property.resolver.araresolver.model.GenerateTaskMixinImpl;
+import com.geewhiz.pacify.property.resolver.araresolver.model.VariableMixinImpl;
 import com.geewhiz.pacify.resolver.BasePropertyResolver;
 import com.uc4.ara.feature.utils.Maxim;
 import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentDescriptorResult;
@@ -65,6 +68,8 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
     private String              beginToken;
     private String              endToken;
+
+    private String              propertyKeyValueSeparator;
 
     public AraPropertyResolver() {
     }
@@ -125,8 +130,11 @@ public class AraPropertyResolver extends BasePropertyResolver {
         logger.debug("Webservice response:");
         logger.debug(result.getDeploymentXML().getValue());
 
-        setAraData(new XBProjector().onXMLString(result.getDeploymentXML().getValue()).createProjection(
-                AraData.class));
+        XBProjector xbProjector = new XBProjector();
+        xbProjector.mixins().addProjectionMixin(Variable.class, new VariableMixinImpl(getKeyValueSeparatorToken()));
+        xbProjector.mixins().addProjectionMixin(GenerateTask.class, new GenerateTaskMixinImpl(getKeyValueSeparatorToken()));
+
+        setAraData(xbProjector.onXMLString(result.getDeploymentXML().getValue()).createProjection(AraData.class));
 
         setInitilized(true);
     }
@@ -141,8 +149,6 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
     public String getPropertyValue(String property) {
         initialize();
-
-        logger.debug("Getting property value for [{}]", property);
 
         Variable variable = getVariable(property);
         if (variable == null) {
@@ -322,6 +328,14 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
     public void setEndToken(String endToken) {
         this.endToken = endToken;
+    }
+
+    public void setKeyValueSeparatorToken(String propertyKeyValueSeparator) {
+        this.propertyKeyValueSeparator = propertyKeyValueSeparator;
+    }
+
+    public String getKeyValueSeparatorToken() {
+        return propertyKeyValueSeparator;
     }
 
 }

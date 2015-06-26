@@ -1,4 +1,4 @@
-package com.geewhiz.pacify.property.resolver.araresolver;
+package com.geewhiz.pacify.property.resolver.araresolver.model;
 
 import java.util.List;
 
@@ -25,38 +25,40 @@ import org.xmlbeam.annotation.XBRead;
 
 public interface AraData {
 
-    interface Variable {
+    public interface Variable extends VariableMixin {
+
         @XBRead("@name")
         String getInternalName();
 
-        @XBRead("substring-before(@value, '=>')")
-        String getName();
+        @XBRead("substring-before(@value, '{0}')")
+        String getNameWithSeparator(String separator);
 
-        @XBRead("substring-after(@value, '=>')")
-        String getValue();
+        @XBRead("substring-after(@value, '{0}')")
+        String getValueWithSeparator(String separator);
 
         @XBRead("boolean(@isEncrypted)")
         Boolean isEncrypted();
+
     }
 
-    interface GenerateTask {
+    public interface GenerateTask extends GenerateTaskMixin {
         @XBRead("@alias")
         String getAlias();
 
         @XBRead("./variables/variable")
         List<Variable> getVariables();
 
-        @XBRead("./variables/variable[starts-with(@name,'{0}') and contains(@value, '=>')]")
-        List<Variable> getVariables(String forNamespace);
+        @XBRead("./variables/variable[starts-with(@name,'{0}') and contains(@value, '{1}')]")
+        List<Variable> getVariablesWithSeparator(String forNamespace, String separator);
 
-        @XBRead("./variables/variable[starts-with(@value,'{0}=>')]")
-        Variable getVariable(String variable);
+        @XBRead("./variables/variable[starts-with(@value,'{0}{1}')]")
+        VariableMixin getVariableWithSeparator(String variable, String separator);
 
-        @XBRead("./variables/variable[starts-with(@name,'{0}') and starts-with(@value,'{1}=>')]")
-        Variable getVariable(String forNamespace, String variable);
+        @XBRead("./variables/variable[starts-with(@name,'{0}') and starts-with(@value,'{1}{2}')]")
+        Variable getVariableWithSeparator(String forNamespace, String variable, String separator);
     }
 
-    interface Task {
+    public interface Task {
         @XBRead("@parentComponent")
         String getParentComponent();
 

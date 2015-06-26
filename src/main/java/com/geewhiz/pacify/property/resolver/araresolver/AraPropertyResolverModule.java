@@ -57,15 +57,16 @@ public class AraPropertyResolverModule extends PropertyResolverModule {
         String namespace = commandLineParameters.get("namespace");
         String beginToken = commandLineParameters.get("beginToken");
         String endToken = commandLineParameters.get("endToken");
+        String propertyKeyValueSeparator = commandLineParameters.get("propertyKeySeparator");
         Boolean decodePasswordWithBase64 = Boolean.parseBoolean(commandLineParameters.get("decodePasswordWithBase64"));
 
-        checkNotNull(araUrl, "araUrl is null! Please specify it via -DAraResolver.araUrl=<url>");
-        checkNotNull(username, "username is null! Please specify it via -DAraResolver.username=<username>. The user is used to authenticate with ara.");
-        checkNotNull(password, "password is null! Please specify it via -DAraResolver.password=<password>. The password is used to authenticate with ara.");
-        checkNotNull(runId, "runId is null! Please specify it via -DAraResolver.runId=<runId>.");
-        checkNotNull(target, "target is null! Please specify it via -DAraResolver.target=<target>.");
-        checkNotNull(component, "component is null! Please specify it via -DAraResolver.component=<component>.");
-        checkNotNull(namespace, "namespace is null! Please specify it via -DAraResolver.namespace=<namespace>.");
+        checkNotNull(araUrl, "araUrl is null! Please specify it via -RAraResolver.araUrl=<url>");
+        checkNotNull(username, "username is null! Please specify it via -RAraResolver.username=<username>. The user is used to authenticate with ara.");
+        checkNotNull(password, "password is null! Please specify it via -RAraResolver.password=<password>. The password is used to authenticate with ara.");
+        checkNotNull(runId, "runId is null! Please specify it via -RAraResolver.runId=<runId>.");
+        checkNotNull(target, "target is null! Please specify it via -RAraResolver.target=<target>.");
+        checkNotNull(component, "component is null! Please specify it via -RAraResolver.component=<component>.");
+        checkNotNull(namespace, "namespace is null! Please specify it via -RAraResolver.namespace=<namespace>.");
 
         AraPropertyResolver araPropertyResolver = new AraPropertyResolver();
         araPropertyResolver.setAraUrl(araUrl);
@@ -78,6 +79,7 @@ public class AraPropertyResolverModule extends PropertyResolverModule {
         araPropertyResolver.setDecodePasswordWithBase64(decodePasswordWithBase64);
         araPropertyResolver.setBeginToken(beginToken == null ? "@" : beginToken);
         araPropertyResolver.setEndToken(endToken == null ? "@" : endToken);
+        araPropertyResolver.setKeyValueSeparatorToken(propertyKeyValueSeparator == null ? "=>" : propertyKeyValueSeparator);
 
         return araPropertyResolver;
     }
