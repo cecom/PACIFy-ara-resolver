@@ -131,7 +131,8 @@ public class AraPropertyResolver extends BasePropertyResolver {
         logger.debug(result.getDeploymentXML().getValue());
 
         XBProjector xbProjector = new XBProjector();
-        xbProjector.mixins().addProjectionMixin(Variable.class, new VariableMixinImpl(getKeyValueSeparatorToken()));
+        xbProjector.mixins()
+                .addProjectionMixin(Variable.class, new VariableMixinImpl(getKeyValueSeparatorToken(), getEncoding(), isDecodePasswordWithBase64()));
         xbProjector.mixins().addProjectionMixin(GenerateTask.class, new GenerateTaskMixinImpl(getKeyValueSeparatorToken()));
 
         setAraData(xbProjector.onXMLString(result.getDeploymentXML().getValue()).createProjection(AraData.class));

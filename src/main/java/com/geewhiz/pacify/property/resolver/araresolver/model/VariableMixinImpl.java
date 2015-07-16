@@ -1,6 +1,11 @@
 package com.geewhiz.pacify.property.resolver.araresolver.model;
 
+import java.io.UnsupportedEncodingException;
+
+import org.apache.commons.codec.binary.Base64;
+
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Variable;
+import com.uc4.ara.feature.utils.Maxim;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,16 +29,43 @@ import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Variable;
 public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
 
     private Variable me;
+    private Boolean  decodePasswordWithBase64;
+    private String   encoding;
+    private String   keyValueStore;
 
-    public VariableMixinImpl(String propertyKeyValueSeparator) {
+    public VariableMixinImpl(String propertyKeyValueSeparator, String encoding, Boolean decodePasswordWithBase64) {
         super(propertyKeyValueSeparator);
+        this.decodePasswordWithBase64 = decodePasswordWithBase64;
+        this.encoding = encoding;
     }
 
     public String getName() {
-        return me.getNameWithSeparator(getPropertyKeyValueSeparator());
+        int separatorIdx = getKeyValueStoreAndDecryptIfNecessary().indexOf(getPropertyKeyValueSeparator());
+
+        return getKeyValueStoreAndDecryptIfNecessary().substring(0, separatorIdx);
     }
 
     public String getValue() {
-        return me.getValueWithSeparator(getPropertyKeyValueSeparator());
+        int separatorIdx = getKeyValueStoreAndDecryptIfNecessary().indexOf(getPropertyKeyValueSeparator());
+
+        return getKeyValueStoreAndDecryptIfNecessary().substring(separatorIdx + getPropertyKeyValueSeparator().length());
     };
+
+    public String getKeyValueStoreAndDecryptIfNecessary() {
+        if (keyValueStore == null) {
+            keyValueStore = me.getInternalValue();
+            if (me.isEncrypted()) {
+                keyValueStore = Maxim.deMaxim(me.getInternalValue());
+                if (decodePasswordWithBase64) {
+                    try {
+                        keyValueStore = new String(Base64.decodeBase64(keyValueStore), encoding);
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException("Error while decoding passwort", e);
+                    }
+                }
+            }
+        }
+
+        return keyValueStore;
+    }
 }

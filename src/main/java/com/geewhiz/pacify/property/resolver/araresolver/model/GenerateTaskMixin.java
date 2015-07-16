@@ -25,10 +25,9 @@ import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Variable;
 
 public interface GenerateTaskMixin {
 
-    List<Variable> getVariables(String forNamespace);
-
     VariableMixin getVariable(String variable);
 
     Variable getVariable(String forNamespace, String variable);
 
+    List<Variable> getVariables(String forNamespace);
 }

@@ -1,5 +1,6 @@
 package com.geewhiz.pacify.property.resolver.araresolver.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.GenerateTask;
@@ -32,16 +33,38 @@ public class GenerateTaskMixinImpl extends AbstractMixin implements GenerateTask
         super(propertyKeyValueSeparator);
     }
 
+    /**
+     * Fetch all variables which contains the separator
+     */
     public List<Variable> getVariables(String forNamespace) {
-        return me.getVariablesWithSeparator(forNamespace, getPropertyKeyValueSeparator());
+        List<Variable> result = new ArrayList<Variable>();
+
+        for (Variable variable : me.getVariablesForNamespace(forNamespace)) {
+            if (variable.getKeyValueStoreAndDecryptIfNecessary().contains(getPropertyKeyValueSeparator())) {
+                result.add(variable);
+            }
+        }
+
+        return result;
     }
 
-    public VariableMixin getVariable(String variable) {
-        return me.getVariableWithSeparator(variable, getPropertyKeyValueSeparator());
+    public Variable getVariable(String variable) {
+        for (Variable current : me.getVariables()) {
+            if (current.getName().equals(variable)) {
+                return current;
+            }
+        }
+        return null;
     }
 
     public Variable getVariable(String forNamespace, String variable) {
-        return me.getVariableWithSeparator(forNamespace, variable, getPropertyKeyValueSeparator());
+        for (Variable current : me.getVariablesForNamespace(forNamespace)) {
+            if (current.getName().equals(variable)) {
+                return current;
+            }
+        }
+
+        return null;
     }
 
 }

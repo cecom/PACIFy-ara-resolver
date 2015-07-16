@@ -1,6 +1,5 @@
 package com.geewhiz.pacify.property.resolver.araresolver.model;
 
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -25,5 +24,7 @@ public interface VariableMixin {
     String getName();
 
     String getValue();
+
+    String getKeyValueStoreAndDecryptIfNecessary();
 
 }
