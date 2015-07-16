@@ -51,7 +51,7 @@ public class TestAra {
         araPropertyResolver.setNamespace("/example_namespace");
 
         XBProjector xbProjector = new XBProjector();
-        xbProjector.mixins().addProjectionMixin(Variable.class, new VariableMixinImpl("=>"));
+        xbProjector.mixins().addProjectionMixin(Variable.class, new VariableMixinImpl("=>", "utf-8", Boolean.FALSE));
         xbProjector.mixins().addProjectionMixin(GenerateTask.class, new GenerateTaskMixinImpl("=>"));
 
         AraData araData = xbProjector.io().file("target/test-classes/example_ara_output_cddata.xml").read(AraData.class);

@@ -19,7 +19,6 @@ package com.geewhiz.pacify.property.resolver.araresolver;
  * under the License.
  */
 
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.TreeSet;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xmlbeam.XBProjector;
@@ -145,7 +143,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
         Variable variable = getVariable(property);
 
-        return variable != null;
+        return variable.getValue() != null;
     }
 
     public String getPropertyValue(String property) {
@@ -156,21 +154,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
             return null;
         }
 
-        String value = variable.getValue();
-        if (variable.isEncrypted()) {
-            logger.debug("Property is encrypted. Decrypting.");
-
-            String araDecoded = Maxim.deMaxim(value);
-            if (isDecodePasswordWithBase64()) {
-                logger.debug("Property is base64 encryped. Decrypting.");
-                try {
-                    return new String(Base64.decodeBase64(araDecoded), getEncoding());
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("Error while decoding passwort", e);
-                }
-            }
-        }
-        return value;
+        return variable.getValue();
     }
 
     private Variable getVariable(String property) {
@@ -205,7 +189,9 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
         List<Variable> variables = generateTask.getVariables(namespace);
         for (Variable variable : variables) {
-            result.add(variable.getName());
+            if (variable.getValue() != null) {
+                result.add(variable.getName());
+            }
         }
 
         return result;
