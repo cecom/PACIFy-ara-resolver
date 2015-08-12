@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Variable;
-import com.uc4.ara.feature.utils.Maxim;
+import com.uc4.util.Maxim;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

@@ -33,12 +33,6 @@ public interface AraData {
         @XBRead("@value")
         String getInternalValue();
 
-        // @XBRead("substring-before(@value, '{0}')")
-        // String getNameWithSeparator(String separator);
-        //
-        // @XBRead("substring-after(@value, '{0}')")
-        // String getValueWithSeparator(String separator);
-
         @XBRead("boolean(@isEncrypted)")
         Boolean isEncrypted();
 
@@ -51,17 +45,8 @@ public interface AraData {
         @XBRead("./variables/variable")
         List<Variable> getVariables();
 
-        @XBRead("./variables/variable[starts-with(@name,'{0}')]")
+        @XBRead("./variables/variable[starts-with(@name,'{0}/')]")
         List<Variable> getVariablesForNamespace(String forNamespace);
-
-        // @XBRead("./variables/variable[starts-with(@name,'{0}') and contains(@value, '{1}')]")
-        // List<Variable> getVariablesWithSeparator(String forNamespace, String separator);
-        //
-        // @XBRead("./variables/variable[starts-with(@value,'{0}{1}')]")
-        // VariableMixin getVariableWithSeparator(String variable, String separator);
-        //
-        // @XBRead("./variables/variable[starts-with(@name,'{0}') and starts-with(@value,'{1}{2}')]")
-        // Variable getVariableWithSeparator(String forNamespace, String variable, String separator);
     }
 
     public interface Task {

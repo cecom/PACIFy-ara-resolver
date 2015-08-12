@@ -16,7 +16,9 @@
                 <variables>
                     <variable name="/example_namespace/value1" value="foobar1=>Componente_1_foobar1_value" />
                     <variable name="/example_namespace/value2" value="foobar2=>Componente_1_foobar2_value" />
+                    <variable name="/example_namespace/value3" isEncrypted="true" value="--10E5188C13092C9C928DAC60A2DBB64F28D2CDB6B44EFF17F44DA9BA17BE510BFE37BA85F86B821064" />
                     <variable name="/example_namespace/WrongConfiguredVariable" value="isn't correct" />
+                    <variable name="/example_namespace2/variableShouldNotBeShownBecauseDifferentNamespace" value="foobar3=>Componente_1_foobar3_value" />
                     <variable name="/another_namespace/value1" value="foobar1=>Componente_1_another_namespace_foobar1_value" />
                 </variables>
             </generateTask>

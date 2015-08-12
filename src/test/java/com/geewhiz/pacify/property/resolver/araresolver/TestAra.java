@@ -49,9 +49,10 @@ public class TestAra {
         araPropertyResolver.setTarget("server1.example.org");
         araPropertyResolver.setComponent("Componente_1");
         araPropertyResolver.setNamespace("/example_namespace");
+        araPropertyResolver.setDecodePasswordWithBase64(true);
 
         XBProjector xbProjector = new XBProjector();
-        xbProjector.mixins().addProjectionMixin(Variable.class, new VariableMixinImpl("=>", "utf-8", Boolean.FALSE));
+        xbProjector.mixins().addProjectionMixin(Variable.class, new VariableMixinImpl("=>", "UTF-8", Boolean.TRUE));
         xbProjector.mixins().addProjectionMixin(GenerateTask.class, new GenerateTaskMixinImpl("=>"));
 
         AraData araData = xbProjector.io().file("target/test-classes/example_ara_output_cddata.xml").read(AraData.class);
@@ -62,9 +63,10 @@ public class TestAra {
         araPropertyResolver.setComponent("Componente_1");
         araPropertyResolver.setNamespace("/example_namespace");
         properties = araPropertyResolver.getPropertyKeys();
-        Assert.assertEquals("Wrong property size count.", 2, properties.size());
+        Assert.assertEquals("Wrong property size count.", 3, properties.size());
         Assert.assertEquals("Componente_1_foobar1_value", araPropertyResolver.getPropertyValue("foobar1"));
         Assert.assertEquals("Componente_1_foobar2_value", araPropertyResolver.getPropertyValue("foobar2"));
+        Assert.assertEquals("encryptedPassword", araPropertyResolver.getPropertyValue("foobar3"));
 
         araPropertyResolver.setComponent("Componente_2");
         properties = araPropertyResolver.getPropertyKeys();
