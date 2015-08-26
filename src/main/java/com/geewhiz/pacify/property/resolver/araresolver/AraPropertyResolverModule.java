@@ -1,7 +1,11 @@
 package com.geewhiz.pacify.property.resolver.araresolver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import com.geewhiz.pacify.defect.Defect;
+import com.geewhiz.pacify.property.resolver.araresolver.defects.AraParameterMissingDefect;
 import com.geewhiz.pacify.resolver.PropertyResolver;
 import com.geewhiz.pacify.resolver.PropertyResolverModule;
 import com.google.inject.Provides;
@@ -28,7 +32,20 @@ import com.google.inject.multibindings.Multibinder;
 
 public class AraPropertyResolverModule extends PropertyResolverModule {
 
-    Map<String, String> commandLineParameters;
+    Map<String, String>  commandLineParameters;
+    private String       araUrl;
+    private String       username;
+    private String       password;
+    private String       runId;
+    private String       target;
+    private String       component;
+    private String       namespace;
+    private String       beginToken;
+    private String       endToken;
+    private String       propertyKeyValueSeparator;
+    private boolean      decodePasswordWithBase64;
+
+    private List<Defect> defects = new ArrayList<Defect>();
 
     @Override
     public String getResolverId() {
@@ -44,21 +61,18 @@ public class AraPropertyResolverModule extends PropertyResolverModule {
     @Override
     public void setParameters(Map<String, String> commandLineParameters) {
         this.commandLineParameters = commandLineParameters;
-    }
 
-    @Provides
-    public AraPropertyResolver createFilePropertyResolver() {
-        String araUrl = commandLineParameters.get("araUrl");
-        String username = commandLineParameters.get("username");
-        String password = commandLineParameters.get("password");
-        String runId = commandLineParameters.get("runId");
-        String target = commandLineParameters.get("target");
-        String component = commandLineParameters.get("component");
-        String namespace = commandLineParameters.get("namespace");
-        String beginToken = commandLineParameters.get("beginToken");
-        String endToken = commandLineParameters.get("endToken");
-        String propertyKeyValueSeparator = commandLineParameters.get("propertyKeySeparator");
-        Boolean decodePasswordWithBase64 = Boolean.parseBoolean(commandLineParameters.get("decodePasswordWithBase64"));
+        araUrl = commandLineParameters.get("araUrl");
+        username = commandLineParameters.get("username");
+        password = commandLineParameters.get("password");
+        runId = commandLineParameters.get("runId");
+        target = commandLineParameters.get("target");
+        component = commandLineParameters.get("component");
+        namespace = commandLineParameters.get("namespace");
+        beginToken = commandLineParameters.get("beginToken");
+        endToken = commandLineParameters.get("endToken");
+        propertyKeyValueSeparator = commandLineParameters.get("propertyKeySeparator");
+        decodePasswordWithBase64 = Boolean.parseBoolean(commandLineParameters.get("decodePasswordWithBase64"));
 
         checkNotNull(araUrl, "araUrl is null! Please specify it via -RAraResolver.araUrl=<url>");
         checkNotNull(username, "username is null! Please specify it via -RAraResolver.username=<username>. The user is used to authenticate with ara.");
@@ -67,8 +81,12 @@ public class AraPropertyResolverModule extends PropertyResolverModule {
         checkNotNull(target, "target is null! Please specify it via -RAraResolver.target=<target>.");
         checkNotNull(component, "component is null! Please specify it via -RAraResolver.component=<component>.");
         checkNotNull(namespace, "namespace is null! Please specify it via -RAraResolver.namespace=<namespace>.");
+    }
 
+    @Provides
+    public AraPropertyResolver createFilePropertyResolver() {
         AraPropertyResolver araPropertyResolver = new AraPropertyResolver();
+
         araPropertyResolver.setAraUrl(araUrl);
         araPropertyResolver.setUserName(username);
         araPropertyResolver.setPassword(password);
@@ -84,9 +102,15 @@ public class AraPropertyResolverModule extends PropertyResolverModule {
         return araPropertyResolver;
     }
 
+    @Override
+    public List<Defect> getDefects() {
+        return defects;
+    }
+
     private void checkNotNull(String param, String message) {
         if (param == null) {
-            throw new IllegalArgumentException(message);
+            defects.add(new AraParameterMissingDefect(param, message));
         }
     }
+
 }
