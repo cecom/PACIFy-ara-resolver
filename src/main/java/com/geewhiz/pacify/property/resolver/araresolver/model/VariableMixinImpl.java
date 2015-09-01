@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Variable;
-import com.uc4.util.Maxim;
+import com.uc4.ara.feature.utils.Maxim;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -45,11 +45,21 @@ public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
     public String getName() {
         int separatorIdx = getKeyValueStoreAndDecryptIfNecessary().indexOf(getPropertyKeyValueSeparator());
 
+        if (separatorIdx == -1) {
+            logger.debug("The property format of [{}] is wrong. The key/value separator [{}] is missing.", me.getInternalName(), getPropertyKeyValueSeparator());
+            return null;
+        }
+
         return getKeyValueStoreAndDecryptIfNecessary().substring(0, separatorIdx);
     }
 
     public String getValue() {
         int separatorIdx = getKeyValueStoreAndDecryptIfNecessary().indexOf(getPropertyKeyValueSeparator());
+
+        if (separatorIdx == -1) {
+            logger.debug("The property format of [{}] is wrong. The key/value separator [{}] is missing.", me.getInternalName(), getPropertyKeyValueSeparator());
+            return null;
+        }
 
         String value = getKeyValueStoreAndDecryptIfNecessary().substring(separatorIdx + getPropertyKeyValueSeparator().length());
 
@@ -57,7 +67,7 @@ public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
             try {
                 if (!Base64.isBase64(value)) {
                     logger.debug(
-                            "You defined to decode the value with base64, but this value isn't base64 encoded. [AraPropertyName={}],[Property={}] [Value={}]",
+                            "        You defined to decode the value with base64, but this value isn't base64 encoded. [AraPropertyName={}],[Property={}] [Value={}]",
                             me.getInternalName(), me.getName(),
                             value);
                     return null;

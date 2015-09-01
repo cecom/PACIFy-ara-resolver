@@ -57,9 +57,9 @@ public class GenerateTaskMixinImpl extends AbstractMixin implements GenerateTask
         return null;
     }
 
-    public Variable getVariable(String forNamespace, String variable) {
+    public Variable getVariable(String forNamespace, String property) {
         for (Variable current : me.getVariablesForNamespace(forNamespace)) {
-            if (current.getName().equals(variable)) {
+            if (property.equals(current.getName())) {
                 return current;
             }
         }

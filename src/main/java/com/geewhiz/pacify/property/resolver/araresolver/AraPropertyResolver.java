@@ -45,6 +45,7 @@ import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentDescriptorResul
 import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentService;
 import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentService_Service;
 
+@SuppressWarnings({ "restriction", "restriction" })
 public class AraPropertyResolver extends BasePropertyResolver {
 
     private Logger              logger       = LogManager.getLogger(AraPropertyResolver.class.getName());
@@ -72,6 +73,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
     public AraPropertyResolver() {
     }
 
+    @SuppressWarnings("restriction")
     private synchronized void initialize() {
         if (isInitilized()) {
             return;
@@ -117,6 +119,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         logger.debug("Webservice endpoint: {}", araUrl + "/" + SERVICE_NAME);
 
         DeploymentService webservice = serviceFactory.getBasicHttpBindingDeploymentService();
+        @SuppressWarnings("restriction")
         BindingProvider bp = (BindingProvider) webservice;
         bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, araUrl + "/" + SERVICE_NAME);
 
@@ -142,6 +145,10 @@ public class AraPropertyResolver extends BasePropertyResolver {
         initialize();
 
         Variable variable = getVariable(property);
+
+        if (variable == null) {
+            return false;
+        }
 
         return variable.getValue() != null;
     }

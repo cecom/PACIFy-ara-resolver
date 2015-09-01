@@ -64,9 +64,9 @@ public class TestAra {
         araPropertyResolver.setNamespace("/example_namespace");
         properties = araPropertyResolver.getPropertyKeys();
         Assert.assertEquals("Wrong property size count.", 3, properties.size());
-        Assert.assertEquals("Componente_1_foobar1_value", araPropertyResolver.getPropertyValue("foobar1"));
-        Assert.assertEquals("Componente_1_foobar2_value", araPropertyResolver.getPropertyValue("foobar2"));
-        Assert.assertEquals("encryptedPassword", araPropertyResolver.getPropertyValue("foobar3"));
+        Assert.assertEquals("expect for value1", "Componente_1_foobar1_value", araPropertyResolver.getPropertyValue("foobar1"));
+        Assert.assertEquals("expect for value2", "Componente_1_foobar2_value", araPropertyResolver.getPropertyValue("foobar2"));
+        Assert.assertEquals("expect for value3", "encryptedPassword", araPropertyResolver.getPropertyValue("foobar3"));
 
         araPropertyResolver.setComponent("Componente_2");
         properties = araPropertyResolver.getPropertyKeys();
