@@ -20,7 +20,7 @@ package com.geewhiz.pacify.property.resolver.araresolver;
  */
 
 import java.net.URL;
-import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -114,7 +114,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
         DeploymentService_Service serviceFactory = new DeploymentService_Service(wsdl, qname);
 
-        logger.debug("Webservice endpoint: {}", araUrl + "/" + SERVICE_NAME);
+        logger.info("ARA Webservice endpoint: {}", araUrl + "/" + SERVICE_NAME);
 
         DeploymentService webservice = serviceFactory.getBasicHttpBindingDeploymentService();
         BindingProvider bp = (BindingProvider) webservice;
@@ -215,8 +215,8 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return "ARA";
     }
 
-    public List<Defect> checkForDuplicateEntry() {
-        return Collections.emptyList();
+    public LinkedHashSet<Defect> checkForDuplicateEntry() {
+        return new LinkedHashSet<Defect>();
     }
 
     public String getBeginToken() {

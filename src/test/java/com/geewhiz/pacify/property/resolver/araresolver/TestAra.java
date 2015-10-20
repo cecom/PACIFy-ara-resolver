@@ -1,9 +1,12 @@
 package com.geewhiz.pacify.property.resolver.araresolver;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -18,6 +21,10 @@ import org.xmlbeam.XBProjector;
 
 import com.geewhiz.pacify.CreatePropertyFile;
 import com.geewhiz.pacify.CreatePropertyFile.OutputType;
+import com.geewhiz.pacify.Validator;
+import com.geewhiz.pacify.defect.Defect;
+import com.geewhiz.pacify.defect.ResolverDefect;
+import com.geewhiz.pacify.managers.EntityManager;
 import com.geewhiz.pacify.managers.PropertyResolveManager;
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData;
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.GenerateTask;
@@ -55,7 +62,7 @@ public class TestAra {
         Logger logger = LogManager.getLogger(TestAra.class.getName());
         LoggingUtils.setLogLevel(logger, Level.DEBUG);
 
-        AraPropertyResolver araPropertyResolver = createAraPropertyResolver();
+        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success");
 
         Set<String> properties = null;
 
@@ -64,7 +71,7 @@ public class TestAra {
         properties = araPropertyResolver.getPropertyKeys();
         Assert.assertEquals("Wrong property size count.", 3, properties.size());
         Assert.assertEquals("expect for value1", "Componente_1_foobar1_value", araPropertyResolver.getPropertyValue("foobar1"));
-        Assert.assertEquals("expect for value2", "Componente_1_foobar2_value", araPropertyResolver.getPropertyValue("foobar2"));
+        Assert.assertEquals("expect for value2", "Componente_1_foobar2_value_with_<_>_<", araPropertyResolver.getPropertyValue("foobar2"));
         Assert.assertEquals("expect for value3", "encryptedPassword", araPropertyResolver.getPropertyValue("foobar3"));
 
         araPropertyResolver.setComponent("Componente_2");
@@ -84,7 +91,7 @@ public class TestAra {
         Logger logger = LogManager.getLogger(TestAra.class.getName());
         LoggingUtils.setLogLevel(logger, Level.DEBUG);
 
-        AraPropertyResolver araPropertyResolver = createAraPropertyResolver();
+        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success");
         PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
         CreatePropertyFile createPropertyFile = new CreatePropertyFile(prm);
 
@@ -111,15 +118,42 @@ public class TestAra {
 
         // Test the DEBUG LOG Messages, we should not see the encrypted value
         Assert.assertEquals("We expect log lines:", 6, listAppender.getLogMessages().size());
-        Assert.assertEquals("Password should be encrypted in debug message.", "       Resolved property [foobar3] to value [**********]", listAppender
+        Assert.assertEquals("Password should be encrypted in debug message.", "             Resolved property [foobar3] to value [**********]", listAppender
                 .getLogMessages().get(4));
 
         // Test the STDOUT there we should see the encrypted value
         List<String> outputLines = IOUtils.readLines(new StringReader(outContent.toString()));
-        Assert.assertEquals("We expect the decoded value", "foobar3=encryptedPassword", outputLines.get(2));
+        Assert.assertEquals("We expect the decoded value", "*foobar3=encryptedPassword", outputLines.get(0));
     }
 
-    private AraPropertyResolver createAraPropertyResolver() throws IOException {
+    @Test
+    public void errorTest() throws IOException {
+        Logger logger = LogManager.getLogger(TestAra.class.getName());
+        LoggingUtils.setLogLevel(logger, Level.INFO);
+
+        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("error/test1/response");
+        PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
+
+        araPropertyResolver.setComponent("Componente_1");
+        araPropertyResolver.setNamespace("/example_namespace");
+
+        EntityManager entityManager = new EntityManager(new File("target/test-classes/error/test1/package"));
+        entityManager.initialize();
+
+        Validator validator = new Validator(prm);
+        validator.enablePropertyResolveChecks();
+        LinkedHashSet<Defect> result = validator.validateInternal(entityManager);
+
+        List<Defect> defects = new ArrayList<Defect>(result);
+
+        Assert.assertEquals("We expect one error", 1, defects.size());
+        Assert.assertEquals(
+                "We expect one error",
+                "        You defined to decode the value with base64, but this value isn't base64 encoded. [AraPropertyName=/example_namespace/value3],[Property=foobar3] [Value=**********]",
+                ((ResolverDefect) defects.get(0)).getMessage());
+    }
+
+    private AraPropertyResolver createAraPropertyResolver(String folder) throws IOException {
         AraPropertyResolver araPropertyResolver = new AraPropertyResolver();
 
         araPropertyResolver.setInitilized(true);
@@ -132,7 +166,7 @@ public class TestAra {
         xbProjector.mixins().addProjectionMixin(Variable.class, new VariableMixinImpl("=>", "UTF-8", Boolean.TRUE));
         xbProjector.mixins().addProjectionMixin(GenerateTask.class, new GenerateTaskMixinImpl("=>"));
 
-        AraData araData = xbProjector.io().file("target/test-classes/example_ara_output_cddata.xml").read(AraData.class);
+        AraData araData = xbProjector.io().file("target/test-classes/" + folder + "/example_ara_output_cddata.xml").read(AraData.class);
         araPropertyResolver.setAraData(araData);
         return araPropertyResolver;
     }

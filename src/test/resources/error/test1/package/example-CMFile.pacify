@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Pacify>
+    <File RelativePath="example.conf">
+        <Property Name="foobar1"/>
+        <Property Name="foobar2"/>
+        <Property Name="foobar3"/>
+    </File>
+</Pacify>

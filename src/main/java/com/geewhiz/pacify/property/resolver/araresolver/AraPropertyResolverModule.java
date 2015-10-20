@@ -1,7 +1,6 @@
 package com.geewhiz.pacify.property.resolver.araresolver;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import com.geewhiz.pacify.defect.Defect;
@@ -45,7 +44,7 @@ public class AraPropertyResolverModule extends PropertyResolverModule {
     private String       propertyKeyValueSeparator;
     private boolean      decodePasswordWithBase64;
 
-    private List<Defect> defects = new ArrayList<Defect>();
+    private LinkedHashSet<Defect> defects = new LinkedHashSet<Defect>();
 
     @Override
     public String getResolverId() {
@@ -103,7 +102,7 @@ public class AraPropertyResolverModule extends PropertyResolverModule {
     }
 
     @Override
-    public List<Defect> getDefects() {
+    public LinkedHashSet<Defect> getDefects() {
         return defects;
     }
 
