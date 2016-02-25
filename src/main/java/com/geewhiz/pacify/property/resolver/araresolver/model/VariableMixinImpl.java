@@ -31,11 +31,11 @@ import com.uc4.ara.feature.utils.Maxim;
 
 public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
 
-    private Logger   logger = LogManager.getLogger(VariableMixinImpl.class.getName());
+    private Logger logger = LogManager.getLogger(VariableMixinImpl.class.getName());
 
     private Variable me;
-    private Boolean  decodePasswordWithBase64;
-    private String   encoding;
+    private Boolean decodePasswordWithBase64;
+    private String encoding;
 
     public VariableMixinImpl(String propertyKeyValueSeparator, String encoding, Boolean decodePasswordWithBase64) {
         super(propertyKeyValueSeparator);
@@ -47,11 +47,18 @@ public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
         int separatorIdx = getKeyValueStoreAndDecryptIfNecessary().indexOf(getPropertyKeyValueSeparator());
 
         if (separatorIdx == -1) {
-            logger.debug("The property format of [{}] is wrong. The key/value separator [{}] is missing.", me.getInternalName(), getPropertyKeyValueSeparator());
+            logger.debug("The property format of [{}] is wrong. The key/value separator [{}] is missing.", me.getInternalName(),
+                    getPropertyKeyValueSeparator());
             return null;
         }
 
-        return getKeyValueStoreAndDecryptIfNecessary().substring(0, separatorIdx);
+        String key = getKeyValueStoreAndDecryptIfNecessary().substring(0, separatorIdx);
+        String keyTrimmed = key.trim();
+        if (!keyTrimmed.equals(key)) {
+            logger.warn("You have a whitespace error in the key [{}]. Plz fix this.", me.getInternalName());
+            return keyTrimmed;
+        }
+        return key;
     }
 
     public String getValue() {
@@ -78,9 +85,9 @@ public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
         if (me.isEncrypted() && decodePasswordWithBase64) {
             try {
                 if (!Base64.isBase64(value) || value.length() % 4 != 0) {
-                    String message = String
-                            .format("        You defined to decode the value with base64, but this value isn't base64 encoded. [AraPropertyName=%s],[Property=%s] [Value=**********]",
-                                    me.getInternalName(), me.getName());
+                    String message = String.format(
+                            "        You defined to decode the value with base64, but this value isn't base64 encoded. [AraPropertyName=%s],[Property=%s] [Value=**********]",
+                            me.getInternalName(), me.getName());
                     logger.debug(message);
                     throw new ResolverRuntimeException("AraResolver", me.getName(), message);
                 }

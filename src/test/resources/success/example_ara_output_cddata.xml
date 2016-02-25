@@ -31,6 +31,7 @@
                     <variable name="/example_namespace/value1" value="foobar1=&gt;Componente_2_foobar1_value" />
                     <variable name="/example_namespace/value2" value="foobar2=&gt;Componente_2_foobar2_value" />
                     <variable name="/another_namespace/value1" value="foobar1=&gt;Componente_2_another_namespace_foobar1_value" />
+                    <variable name="/another_namespace/value2" value="foobar2 =&gt;Componente_2_another_namespace_foobar2_value" />
                 </variables>
             </generateTask>
         </modification>
