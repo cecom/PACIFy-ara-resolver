@@ -62,31 +62,36 @@ public class TestAra {
         Logger logger = LogManager.getLogger(TestAra.class.getName());
         LoggingUtils.setLogLevel(logger, Level.DEBUG);
 
-        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success");
+        AraPropertyResolver araPropertyResolver = null;
 
         Set<String> properties = null;
 
-        araPropertyResolver.setComponent("Componente_1");
-        araPropertyResolver.setNamespace("/example_namespace");
+        araPropertyResolver=createAraPropertyResolver("success", "Componente_1", "/example_namespace");
         properties = araPropertyResolver.getPropertyKeys();
         Assert.assertEquals("Wrong property size count.", 3, properties.size());
         Assert.assertEquals("expect for value1", "Componente_1_foobar1_value", araPropertyResolver.getPropertyValue("foobar1"));
         Assert.assertEquals("expect for value2", "Componente_1_foobar2_value_with_<_>_<", araPropertyResolver.getPropertyValue("foobar2"));
         Assert.assertEquals("expect for value3", "encryptedPassword", araPropertyResolver.getPropertyValue("foobar3"));
 
-        araPropertyResolver.setComponent("Componente_2");
-        araPropertyResolver.setNamespace("/example_namespace");
+        
+        araPropertyResolver = createAraPropertyResolver("success", "Componente_2", "/example_namespace");
         properties = araPropertyResolver.getPropertyKeys();
         Assert.assertEquals("Wrong property size count.", 2, properties.size());
         Assert.assertEquals("Componente_2_foobar1_value", araPropertyResolver.getPropertyValue("foobar1"));
         Assert.assertEquals("Componente_2_foobar2_value", araPropertyResolver.getPropertyValue("foobar2"));
 
-        araPropertyResolver.setComponent("Componente_2");
-        araPropertyResolver.setNamespace("/another_namespace");
+        araPropertyResolver = createAraPropertyResolver("success", "Componente_2", "/another_namespace");
         properties = araPropertyResolver.getPropertyKeys();
         Assert.assertEquals("Wrong property size count.", 2, properties.size());
         Assert.assertEquals("Componente_2_another_namespace_foobar1_value", araPropertyResolver.getPropertyValue("foobar1"));
         Assert.assertEquals("Componente_2_another_namespace_foobar2_value", araPropertyResolver.getPropertyValue("foobar2"));
+
+        araPropertyResolver = createAraPropertyResolver("success", "Componente_3", "/example_namespace");
+        properties = araPropertyResolver.getPropertyKeys();
+        Assert.assertEquals("Wrong property size count.", 1000, properties.size());
+        Assert.assertEquals("Componente_3_foobar1_value", araPropertyResolver.getPropertyValue("foobar1"));
+        Assert.assertEquals("Componente_3_foobar2_value", araPropertyResolver.getPropertyValue("foobar2"));
+        Assert.assertEquals("Componente_3_foobar1000_value", araPropertyResolver.getPropertyValue("foobar1000"));
     }
 
     @Test
@@ -94,7 +99,7 @@ public class TestAra {
         Logger logger = LogManager.getLogger(TestAra.class.getName());
         LoggingUtils.setLogLevel(logger, Level.DEBUG);
 
-        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success");
+        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success", "Componente_1", "/example_namespace");
         PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
         CreatePropertyFile createPropertyFile = new CreatePropertyFile(prm);
 
@@ -103,9 +108,6 @@ public class TestAra {
         createPropertyFile.setOutputPrefix("");
         createPropertyFile.setFilemode("400");
 
-        araPropertyResolver.setComponent("Componente_1");
-        araPropertyResolver.setNamespace("/example_namespace");
-
         ListAppender listAppender = TestUtil.addListAppenderToLogger();
         PrintStream oldStdOut = System.out;
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -113,16 +115,15 @@ public class TestAra {
 
         try {
             createPropertyFile.write();
-        }
-        finally {
+        } finally {
             System.setOut(oldStdOut);
             outContent.close();
         }
 
         // Test the DEBUG LOG Messages, we should not see the encrypted value
         Assert.assertEquals("We expect log lines:", 6, listAppender.getLogMessages().size());
-        Assert.assertEquals("Password should be encrypted in debug message.", "             Resolved property [foobar3] to value [**********]", listAppender
-                .getLogMessages().get(4));
+        Assert.assertEquals("Password should be encrypted in debug message.", "             Resolved property [foobar3] to value [**********]",
+                listAppender.getLogMessages().get(4));
 
         // Test the STDOUT there we should see the encrypted value
         List<String> outputLines = IOUtils.readLines(new StringReader(outContent.toString()));
@@ -134,11 +135,8 @@ public class TestAra {
         Logger logger = LogManager.getLogger(TestAra.class.getName());
         LoggingUtils.setLogLevel(logger, Level.INFO);
 
-        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("error/test1/response");
+        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("error/test1", "Componente_1", "/example_namespace");
         PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
-
-        araPropertyResolver.setComponent("Componente_1");
-        araPropertyResolver.setNamespace("/example_namespace");
 
         EntityManager entityManager = new EntityManager(new File("target/test-classes/error/test1/package"));
         entityManager.initialize();
@@ -150,13 +148,32 @@ public class TestAra {
         List<Defect> defects = new ArrayList<Defect>(result);
 
         Assert.assertEquals("We expect one error", 1, defects.size());
-        Assert.assertEquals(
-                "We expect one error",
+        Assert.assertEquals("We expect one error",
                 "        You defined to decode the value with base64, but this value isn't base64 encoded. [AraPropertyName=/example_namespace/value3],[Property=foobar3] [Value=**********]",
                 ((ResolverDefect) defects.get(0)).getMessage());
     }
 
-    private AraPropertyResolver createAraPropertyResolver(String folder) throws IOException {
+    @Test
+    public void validateTest() throws IOException {
+        Logger logger = LogManager.getLogger(TestAra.class.getName());
+        LoggingUtils.setLogLevel(logger, Level.INFO);
+
+        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success", "Componente_3", "/example_namespace");
+        PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
+
+        EntityManager entityManager = new EntityManager(new File("target/test-classes/success/package"));
+        entityManager.initialize();
+
+        Validator validator = new Validator(prm);
+        validator.enablePropertyResolveChecks();
+        LinkedHashSet<Defect> result = validator.validateInternal(entityManager);
+
+        List<Defect> defects = new ArrayList<Defect>(result);
+
+        Assert.assertEquals("We expect no error", 0, defects.size());
+    }
+
+    private AraPropertyResolver createAraPropertyResolver(String folder, String component, String namespace) throws IOException {
         AraPropertyResolver araPropertyResolver = new AraPropertyResolver();
 
         araPropertyResolver.setInitilized(true);
@@ -164,13 +181,16 @@ public class TestAra {
         araPropertyResolver.setDecodePasswordWithBase64(true);
         araPropertyResolver.setBeginToken("@");
         araPropertyResolver.setEndToken("@");
+        araPropertyResolver.setComponent(component);
+        araPropertyResolver.setNamespace(namespace);
 
         XBProjector xbProjector = new XBProjector();
         xbProjector.mixins().addProjectionMixin(Variable.class, new VariableMixinImpl("=>", "UTF-8", Boolean.TRUE));
         xbProjector.mixins().addProjectionMixin(GenerateTask.class, new GenerateTaskMixinImpl("=>"));
 
-        AraData araData = xbProjector.io().file("target/test-classes/" + folder + "/example_ara_output_cddata.xml").read(AraData.class);
+        AraData araData = xbProjector.io().file("target/test-classes/" + folder + "/response/example_ara_output_cddata.xml").read(AraData.class);
         araPropertyResolver.setAraData(araData);
+
         return araPropertyResolver;
     }
 

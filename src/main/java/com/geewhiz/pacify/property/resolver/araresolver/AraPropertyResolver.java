@@ -20,8 +20,10 @@ package com.geewhiz.pacify.property.resolver.araresolver;
  */
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -47,27 +49,30 @@ import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentService_Service
 
 public class AraPropertyResolver extends BasePropertyResolver {
 
-    private Logger              logger       = LogManager.getLogger(AraPropertyResolver.class.getName());
+    private Logger                logger        = LogManager.getLogger(AraPropertyResolver.class.getName());
 
-    private static final String SERVICE_NAME = "service/DeploymentService.svc";
+    private static final String   SERVICE_NAME  = "service/DeploymentService.svc";
 
-    private String              araUrl;
-    private String              userName;
-    private String              password;
-    private Integer             runId;
-    private String              target;
-    private String              component;
-    private String              namespace;
+    private String                araUrl;
+    private String                userName;
+    private String                password;
+    private Integer               runId;
+    private String                target;
+    private String                component;
+    private String                namespace;
 
-    private boolean             initilized   = false;
-    private AraData             araData;
+    private boolean               initilized    = false;
+    private AraData               araData;
 
-    private Boolean             decodePasswordWithBase64;
+    private Boolean               decodePasswordWithBase64;
 
-    private String              beginToken;
-    private String              endToken;
+    private String                beginToken;
+    private String                endToken;
 
-    private String              propertyKeyValueSeparator;
+    private String                propertyKeyValueSeparator;
+
+    private TreeSet<String>       propertyKeys;
+    private Map<String, Variable> variableCache = new HashMap<String, Variable>();
 
     public AraPropertyResolver() {
     }
@@ -129,8 +134,8 @@ public class AraPropertyResolver extends BasePropertyResolver {
         logger.debug(result.getDeploymentXML().getValue());
 
         XBProjector xbProjector = new XBProjector();
-        xbProjector.mixins()
-                .addProjectionMixin(Variable.class, new VariableMixinImpl(getKeyValueSeparatorToken(), getEncoding(), isDecodePasswordWithBase64()));
+        xbProjector.mixins().addProjectionMixin(Variable.class,
+                new VariableMixinImpl(getKeyValueSeparatorToken(), getEncoding(), isDecodePasswordWithBase64()));
         xbProjector.mixins().addProjectionMixin(GenerateTask.class, new GenerateTaskMixinImpl(getKeyValueSeparatorToken()));
 
         setAraData(xbProjector.onXMLString(result.getDeploymentXML().getValue()).createProjection(AraData.class));
@@ -153,11 +158,14 @@ public class AraPropertyResolver extends BasePropertyResolver {
     @Override
     public boolean isProtectedProperty(String property) {
         initialize();
+        logger.trace("Method: IsProtectedProperty [{}]", property);
         return getVariable(property).isEncrypted();
     }
 
     public String getPropertyValue(String property) {
         initialize();
+
+        logger.trace("Method: getPropertyValue [{}]", property);
 
         Variable variable = getVariable(property);
         if (variable == null) {
@@ -168,43 +176,58 @@ public class AraPropertyResolver extends BasePropertyResolver {
     }
 
     private Variable getVariable(String property) {
-        Task task = getAraData().getTask(component);
-        if (task == null) {
-            throw new IllegalArgumentException("Couldn't find component [" + component + "]");
+        initialize();
+
+        logger.trace("Method: getVariable#start[{}]", property);
+
+        if (!variableCache.containsKey(property)) {
+            logger.trace("Method: getVariable#getTask [{}]", property);
+            Task task = getAraData().getTask(component);
+            if (task == null) {
+                throw new IllegalArgumentException("Couldn't find component [" + component + "]");
+            }
+
+            logger.trace("Method: getVariable#getGeneratedTask [{}]", property);
+            GenerateTask generateTask = task.getGenerateTask(target);
+            if (generateTask == null) {
+                throw new IllegalArgumentException("Couldn't find target [" + target + "]");
+            }
+
+            logger.trace("Method: getVariable#getVariable [{}]", property);
+            Variable variable = generateTask.getVariable(namespace, property);
+            logger.trace("Method: getVariable#variablePut start [{}]", property);
+            variableCache.put(property, variable);
+            logger.trace("Method: getVariable#variablePut end [{}]", property);
         }
 
-        GenerateTask generateTask = task.getGenerateTask(target);
-        if (generateTask == null) {
-            throw new IllegalArgumentException("Couldn't find target [" + target + "]");
-        }
-
-        Variable variable = generateTask.getVariable(namespace, property);
-        return variable;
+        return variableCache.get(property);
     }
 
     public Set<String> getPropertyKeys() {
         initialize();
 
-        Set<String> result = new TreeSet<String>();
+        if (propertyKeys == null) {
+            propertyKeys = new TreeSet<String>();
 
-        Task task = getAraData().getTask(component);
-        if (task == null) {
-            throw new IllegalArgumentException("Couldn't find component [" + component + "]");
-        }
+            Task task = getAraData().getTask(component);
+            if (task == null) {
+                throw new IllegalArgumentException("Couldn't find component [" + component + "]");
+            }
 
-        GenerateTask generateTask = task.getGenerateTask(target);
-        if (generateTask == null) {
-            throw new IllegalArgumentException("Couldn't find target [" + target + "]");
-        }
+            GenerateTask generateTask = task.getGenerateTask(target);
+            if (generateTask == null) {
+                throw new IllegalArgumentException("Couldn't find target [" + target + "]");
+            }
 
-        List<Variable> variables = generateTask.getVariables(namespace);
-        for (Variable variable : variables) {
-            if (variable.getValue() != null) {
-                result.add(variable.getName());
+            List<Variable> variables = generateTask.getVariables(namespace);
+            for (Variable variable : variables) {
+                if (variable.getValue() != null) {
+                    propertyKeys.add(variable.getName());
+                }
             }
         }
 
-        return result;
+        return propertyKeys;
     }
 
     public String getEncoding() {
@@ -305,6 +328,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
 
     @Override
     public boolean propertyUsesToken(String property) {
+        logger.trace("Method: propertyUsesToken [{}]", property);
         if (getVariable(property).isEncrypted()) {
             return false;
         }

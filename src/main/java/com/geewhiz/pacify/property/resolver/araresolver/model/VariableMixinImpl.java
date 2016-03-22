@@ -44,7 +44,9 @@ public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
     }
 
     public String getName() {
-        int separatorIdx = getKeyValueStoreAndDecryptIfNecessary().indexOf(getPropertyKeyValueSeparator());
+        String keyValueStore = getKeyValueStoreAndDecryptIfNecessary();
+        
+        int separatorIdx = keyValueStore.indexOf(getPropertyKeyValueSeparator());
 
         if (separatorIdx == -1) {
             logger.debug("The property format of [{}] is wrong. The key/value separator [{}] is missing.", me.getInternalName(),
@@ -52,7 +54,7 @@ public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
             return null;
         }
 
-        String key = getKeyValueStoreAndDecryptIfNecessary().substring(0, separatorIdx);
+        String key = keyValueStore.substring(0, separatorIdx);
         String keyTrimmed = key.trim();
         if (!keyTrimmed.equals(key)) {
             logger.warn("You have a whitespace error in the key [{}]. Plz fix this.", me.getInternalName());
@@ -62,7 +64,8 @@ public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
     }
 
     public String getValue() {
-        int separatorIdx = getKeyValueStoreAndDecryptIfNecessary().indexOf(getPropertyKeyValueSeparator());
+        String keyValueStore = getKeyValueStoreAndDecryptIfNecessary();
+        int separatorIdx = keyValueStore.indexOf(getPropertyKeyValueSeparator());
 
         if (separatorIdx == -1) {
             String message = String.format("The property format of [%s] is wrong. The key/value separator [%s] is missing.", me.getInternalName(),
@@ -71,7 +74,7 @@ public class VariableMixinImpl extends AbstractMixin implements VariableMixin {
             throw new ResolverRuntimeException("AraResolver", me.getName(), message);
         }
 
-        String value = getKeyValueStoreAndDecryptIfNecessary().substring(separatorIdx + getPropertyKeyValueSeparator().length());
+        String value = keyValueStore.substring(separatorIdx + getPropertyKeyValueSeparator().length());
 
         if (!me.isEncrypted()) {
             if (value.contains("&lt;")) {

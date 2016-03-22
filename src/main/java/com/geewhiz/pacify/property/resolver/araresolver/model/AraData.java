@@ -42,11 +42,15 @@ public interface AraData {
         @XBRead("@alias")
         String getAlias();
 
-        @XBRead("./variables/variable")
-        List<Variable> getVariables();
-
         @XBRead("./variables/variable[starts-with(@name,'{0}/')]")
         List<Variable> getVariablesForNamespace(String forNamespace);
+        
+        // for performance
+        @XBRead("./variables/variable[starts-with(@name,'{0}/')][starts-with(@value,'{1}')]")
+        List<Variable> getVariablesForNamespaceDirect(String forNamespace, String property);
+        
+        @XBRead("./variables/variable[starts-with(@name,'{0}/')][@isEncrypted=true()]")
+        List<Variable> getVariablesWhichAreEncrypted(String forNamespace);
     }
 
     public interface Task {

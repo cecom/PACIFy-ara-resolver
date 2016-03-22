@@ -1,7 +1,9 @@
 package com.geewhiz.pacify.property.resolver.araresolver.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.GenerateTask;
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Variable;
@@ -48,17 +50,16 @@ public class GenerateTaskMixinImpl extends AbstractMixin implements GenerateTask
         return result;
     }
 
-    public Variable getVariable(String variable) {
-        for (Variable current : me.getVariables()) {
-            if (current.getName().equals(variable)) {
+    public Variable getVariable(String forNamespace, String property) {
+        // first we try direct xml access, so no base64 decode
+        for (Variable current : me.getVariablesForNamespaceDirect(forNamespace, property)) {
+            if (property.equals(current.getName())) {
                 return current;
             }
         }
-        return null;
-    }
 
-    public Variable getVariable(String forNamespace, String property) {
-        for (Variable current : me.getVariablesForNamespace(forNamespace)) {
+        // perhaps it is base64 encoded, so we need to decode it
+        for (Variable current : me.getVariablesWhichAreEncrypted(forNamespace)) {
             if (property.equals(current.getName())) {
                 return current;
             }
