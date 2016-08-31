@@ -4,7 +4,7 @@
     <groupId>com.geewhiz.pacify</groupId>
     <artifactId>pacify.resolver.ara-resolver</artifactId>
     <!-- don't forget to change pacify reference -->
-    <version>1.3.1</version>
+    <version>develop</version>
     <name>com.geewhiz.pacify.resolver.ara-resolver</name>
     <packaging>jar</packaging>
 
@@ -31,7 +31,7 @@
     </scm>
 
     <properties>
-        <pacify.version>1.3.0</pacify.version>
+        <pacify.version>develop</pacify.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <path.ara.tools>c:/tmp/ara-resolver/ARATools.jar</path.ara.tools>
         <!-- test.jvm.path>c:/Program Files/Java/jre1.8.0_60/bin/java.exe</test.jvm.path-->
