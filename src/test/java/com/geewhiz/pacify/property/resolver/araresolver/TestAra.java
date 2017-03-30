@@ -59,21 +59,20 @@ public class TestAra {
 
     @Test
     public void readTest() throws IOException {
-        Logger logger = LogManager.getLogger(TestAra.class.getName());
+        final Logger logger = LogManager.getLogger(TestAra.class.getName());
         LoggingUtils.setLogLevel(logger, Level.DEBUG);
 
         AraPropertyResolver araPropertyResolver = null;
 
         Set<String> properties = null;
 
-        araPropertyResolver=createAraPropertyResolver("success", "Componente_1", "/example_namespace");
+        araPropertyResolver = createAraPropertyResolver("success", "Componente_1", "/example_namespace");
         properties = araPropertyResolver.getPropertyKeys();
         Assert.assertEquals("Wrong property size count.", 3, properties.size());
         Assert.assertEquals("expect for value1", "Componente_1_foobar1_value", araPropertyResolver.getPropertyValue("foobar1"));
         Assert.assertEquals("expect for value2", "Componente_1_foobar2_value_with_<_>_<", araPropertyResolver.getPropertyValue("foobar2"));
         Assert.assertEquals("expect for value3", "encryptedPassword", araPropertyResolver.getPropertyValue("foobar3"));
 
-        
         araPropertyResolver = createAraPropertyResolver("success", "Componente_2", "/example_namespace");
         properties = araPropertyResolver.getPropertyKeys();
         Assert.assertEquals("Wrong property size count.", 2, properties.size());
@@ -96,21 +95,21 @@ public class TestAra {
 
     @Test
     public void callTest() throws IOException {
-        Logger logger = LogManager.getLogger(TestAra.class.getName());
+        final Logger logger = LogManager.getLogger(TestAra.class.getName());
         LoggingUtils.setLogLevel(logger, Level.DEBUG);
 
-        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success", "Componente_1", "/example_namespace");
-        PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
-        CreatePropertyFile createPropertyFile = new CreatePropertyFile(prm);
+        final AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success", "Componente_1", "/example_namespace");
+        final PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
+        final CreatePropertyFile createPropertyFile = new CreatePropertyFile(prm);
 
         createPropertyFile.setOutputType(OutputType.Stdout);
         createPropertyFile.setOutputEncoding("utf-8");
         createPropertyFile.setOutputPrefix("");
         createPropertyFile.setFilemode("400");
 
-        ListAppender listAppender = TestUtil.addListAppenderToLogger();
-        PrintStream oldStdOut = System.out;
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        final ListAppender listAppender = TestUtil.addListAppenderToLogger();
+        final PrintStream oldStdOut = System.out;
+        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
         try {
@@ -126,26 +125,27 @@ public class TestAra {
                 listAppender.getLogMessages().get(4));
 
         // Test the STDOUT there we should see the encrypted value
-        List<String> outputLines = IOUtils.readLines(new StringReader(outContent.toString()));
+        final List<String> outputLines = IOUtils.readLines(new StringReader(outContent.toString()));
         Assert.assertEquals("We expect the decoded value", "*foobar3=encryptedPassword", outputLines.get(0));
     }
 
     @Test
     public void errorTest() throws IOException {
-        Logger logger = LogManager.getLogger(TestAra.class.getName());
+        final Logger logger = LogManager.getLogger(TestAra.class.getName());
         LoggingUtils.setLogLevel(logger, Level.INFO);
 
-        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("error/test1", "Componente_1", "/example_namespace");
-        PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
+        final AraPropertyResolver araPropertyResolver = createAraPropertyResolver("error/test1", "Componente_1", "/example_namespace");
+        final PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
 
-        EntityManager entityManager = new EntityManager(new File("target/test-classes/error/test1/package"));
+        final EntityManager entityManager = new EntityManager(new File("target/test-classes/error/test1/package"));
         entityManager.initialize();
 
-        Validator validator = new Validator(prm);
+        final Validator validator = new Validator(prm);
+        validator.setEntityManager(entityManager);
         validator.enablePropertyResolveChecks();
-        LinkedHashSet<Defect> result = validator.validateInternal(entityManager);
+        final LinkedHashSet<Defect> result = validator.validateInternal();
 
-        List<Defect> defects = new ArrayList<Defect>(result);
+        final List<Defect> defects = new ArrayList<Defect>(result);
 
         Assert.assertEquals("We expect one error", 1, defects.size());
         Assert.assertEquals("We expect one error",
@@ -155,26 +155,27 @@ public class TestAra {
 
     @Test
     public void validateTest() throws IOException {
-        Logger logger = LogManager.getLogger(TestAra.class.getName());
+        final Logger logger = LogManager.getLogger(TestAra.class.getName());
         LoggingUtils.setLogLevel(logger, Level.INFO);
 
-        AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success", "Componente_3", "/example_namespace");
-        PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
+        final AraPropertyResolver araPropertyResolver = createAraPropertyResolver("success", "Componente_3", "/example_namespace");
+        final PropertyResolveManager prm = createPropertyResolveManager(araPropertyResolver);
 
-        EntityManager entityManager = new EntityManager(new File("target/test-classes/success/package"));
+        final EntityManager entityManager = new EntityManager(new File("target/test-classes/success/package"));
         entityManager.initialize();
 
-        Validator validator = new Validator(prm);
+        final Validator validator = new Validator(prm);
+        validator.setEntityManager(entityManager);
         validator.enablePropertyResolveChecks();
-        LinkedHashSet<Defect> result = validator.validateInternal(entityManager);
+        final LinkedHashSet<Defect> result = validator.validateInternal();
 
-        List<Defect> defects = new ArrayList<Defect>(result);
+        final List<Defect> defects = new ArrayList<Defect>(result);
 
         Assert.assertEquals("We expect no error", 0, defects.size());
     }
 
-    private AraPropertyResolver createAraPropertyResolver(String folder, String component, String namespace) throws IOException {
-        AraPropertyResolver araPropertyResolver = new AraPropertyResolver();
+    private AraPropertyResolver createAraPropertyResolver(final String folder, final String component, final String namespace) throws IOException {
+        final AraPropertyResolver araPropertyResolver = new AraPropertyResolver();
 
         araPropertyResolver.setInitilized(true);
         araPropertyResolver.setTarget("server1.example.org");
@@ -184,20 +185,20 @@ public class TestAra {
         araPropertyResolver.setComponent(component);
         araPropertyResolver.setNamespace(namespace);
 
-        XBProjector xbProjector = new XBProjector();
+        final XBProjector xbProjector = new XBProjector();
         xbProjector.mixins().addProjectionMixin(Variable.class, new VariableMixinImpl("=>", "UTF-8", Boolean.TRUE));
         xbProjector.mixins().addProjectionMixin(GenerateTask.class, new GenerateTaskMixinImpl("=>"));
 
-        AraData araData = xbProjector.io().file("target/test-classes/" + folder + "/response/example_ara_output_cddata.xml").read(AraData.class);
+        final AraData araData = xbProjector.io().file("target/test-classes/" + folder + "/response/example_ara_output_cddata.xml").read(AraData.class);
         araPropertyResolver.setAraData(araData);
 
         return araPropertyResolver;
     }
 
-    private PropertyResolveManager createPropertyResolveManager(AraPropertyResolver apr) {
-        Set<PropertyResolver> propertyResolverList = new TreeSet<PropertyResolver>();
+    private PropertyResolveManager createPropertyResolveManager(final AraPropertyResolver apr) {
+        final Set<PropertyResolver> propertyResolverList = new TreeSet<PropertyResolver>();
         propertyResolverList.add(apr);
-        PropertyResolveManager prm = new PropertyResolveManager(propertyResolverList);
+        final PropertyResolveManager prm = new PropertyResolveManager(propertyResolverList);
         return prm;
     }
 

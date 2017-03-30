@@ -35,13 +35,13 @@ import org.apache.logging.log4j.Logger;
 import org.xmlbeam.XBProjector;
 
 import com.geewhiz.pacify.defect.Defect;
+import com.geewhiz.pacify.property.resolver.BasePropertyResolver;
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData;
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.GenerateTask;
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Task;
 import com.geewhiz.pacify.property.resolver.araresolver.model.AraData.Variable;
 import com.geewhiz.pacify.property.resolver.araresolver.model.GenerateTaskMixinImpl;
 import com.geewhiz.pacify.property.resolver.araresolver.model.VariableMixinImpl;
-import com.geewhiz.pacify.resolver.BasePropertyResolver;
 import com.uc4.ara.feature.utils.Maxim;
 import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentDescriptorResult;
 import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentService;
@@ -49,30 +49,30 @@ import com.uc4.schemas.bond._2011_01.deploymentservice.DeploymentService_Service
 
 public class AraPropertyResolver extends BasePropertyResolver {
 
-    private Logger                logger        = LogManager.getLogger(AraPropertyResolver.class.getName());
+    private final Logger                logger        = LogManager.getLogger(AraPropertyResolver.class.getName());
 
-    private static final String   SERVICE_NAME  = "service/DeploymentService.svc";
+    private static final String         SERVICE_NAME  = "service/DeploymentService.svc";
 
-    private String                araUrl;
-    private String                userName;
-    private String                password;
-    private Integer               runId;
-    private String                target;
-    private String                component;
-    private String                namespace;
+    private String                      araUrl;
+    private String                      userName;
+    private String                      password;
+    private Integer                     runId;
+    private String                      target;
+    private String                      component;
+    private String                      namespace;
 
-    private boolean               initilized    = false;
-    private AraData               araData;
+    private boolean                     initilized    = false;
+    private AraData                     araData;
 
-    private Boolean               decodePasswordWithBase64;
+    private Boolean                     decodePasswordWithBase64;
 
-    private String                beginToken;
-    private String                endToken;
+    private String                      beginToken;
+    private String                      endToken;
 
-    private String                propertyKeyValueSeparator;
+    private String                      propertyKeyValueSeparator;
 
-    private TreeSet<String>       propertyKeys;
-    private Map<String, Variable> variableCache = new HashMap<String, Variable>();
+    private TreeSet<String>             propertyKeys;
+    private final Map<String, Variable> variableCache = new HashMap<String, Variable>();
 
     public AraPropertyResolver() {
     }
@@ -114,18 +114,18 @@ public class AraPropertyResolver extends BasePropertyResolver {
             throw new IllegalArgumentException("Ara decodePasswortWithBase64 is null!");
         }
 
-        QName qname = new QName("http://schemas.uc4.com/bond/2011-01/DeploymentService", "DeploymentService");
-        URL wsdl = AraPropertyResolver.class.getResource("/DeploymentService.wsdl");
+        final QName qname = new QName("http://schemas.uc4.com/bond/2011-01/DeploymentService", "DeploymentService");
+        final URL wsdl = AraPropertyResolver.class.getResource("/DeploymentService.wsdl");
 
-        DeploymentService_Service serviceFactory = new DeploymentService_Service(wsdl, qname);
+        final DeploymentService_Service serviceFactory = new DeploymentService_Service(wsdl, qname);
 
         logger.info("ARA Webservice endpoint: {}", araUrl + "/" + SERVICE_NAME);
 
-        DeploymentService webservice = serviceFactory.getBasicHttpBindingDeploymentService();
-        BindingProvider bp = (BindingProvider) webservice;
+        final DeploymentService webservice = serviceFactory.getBasicHttpBindingDeploymentService();
+        final BindingProvider bp = (BindingProvider) webservice;
         bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, araUrl + "/" + SERVICE_NAME);
 
-        DeploymentDescriptorResult result = webservice.getDeploymentDescriptor(userName, password, runId);
+        final DeploymentDescriptorResult result = webservice.getDeploymentDescriptor(userName, password, runId);
         if (!result.isIsSuccess()) {
             throw new RuntimeException("Webservice call wasn't successful!\n" + result.getMessage().getValue());
         }
@@ -133,7 +133,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         logger.debug("Webservice response:");
         logger.debug(result.getDeploymentXML().getValue());
 
-        XBProjector xbProjector = new XBProjector();
+        final XBProjector xbProjector = new XBProjector();
         xbProjector.mixins().addProjectionMixin(Variable.class,
                 new VariableMixinImpl(getKeyValueSeparatorToken(), getEncoding(), isDecodePasswordWithBase64()));
         xbProjector.mixins().addProjectionMixin(GenerateTask.class, new GenerateTaskMixinImpl(getKeyValueSeparatorToken()));
@@ -143,10 +143,11 @@ public class AraPropertyResolver extends BasePropertyResolver {
         setInitilized(true);
     }
 
-    public boolean containsProperty(String property) {
+    @Override
+    public boolean containsProperty(final String property) {
         initialize();
 
-        Variable variable = getVariable(property);
+        final Variable variable = getVariable(property);
 
         if (variable == null) {
             return false;
@@ -156,18 +157,19 @@ public class AraPropertyResolver extends BasePropertyResolver {
     }
 
     @Override
-    public boolean isProtectedProperty(String property) {
+    public boolean isProtectedProperty(final String property) {
         initialize();
         logger.trace("Method: IsProtectedProperty [{}]", property);
         return getVariable(property).isEncrypted();
     }
 
-    public String getPropertyValue(String property) {
+    @Override
+    public String getPropertyValue(final String property) {
         initialize();
 
         logger.trace("Method: getPropertyValue [{}]", property);
 
-        Variable variable = getVariable(property);
+        final Variable variable = getVariable(property);
         if (variable == null) {
             return null;
         }
@@ -175,26 +177,26 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return variable.getValue();
     }
 
-    private Variable getVariable(String property) {
+    private Variable getVariable(final String property) {
         initialize();
 
         logger.trace("Method: getVariable#start[{}]", property);
 
         if (!variableCache.containsKey(property)) {
             logger.trace("Method: getVariable#getTask [{}]", property);
-            Task task = getAraData().getTask(component);
+            final Task task = getAraData().getTask(component);
             if (task == null) {
                 throw new IllegalArgumentException("Couldn't find component [" + component + "]");
             }
 
             logger.trace("Method: getVariable#getGeneratedTask [{}]", property);
-            GenerateTask generateTask = task.getGenerateTask(target);
+            final GenerateTask generateTask = task.getGenerateTask(target);
             if (generateTask == null) {
                 throw new IllegalArgumentException("Couldn't find target [" + target + "]");
             }
 
             logger.trace("Method: getVariable#getVariable [{}]", property);
-            Variable variable = generateTask.getVariable(namespace, property);
+            final Variable variable = generateTask.getVariable(namespace, property);
             logger.trace("Method: getVariable#variablePut start [{}]", property);
             variableCache.put(property, variable);
             logger.trace("Method: getVariable#variablePut end [{}]", property);
@@ -203,24 +205,25 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return variableCache.get(property);
     }
 
+    @Override
     public Set<String> getPropertyKeys() {
         initialize();
 
         if (propertyKeys == null) {
             propertyKeys = new TreeSet<String>();
 
-            Task task = getAraData().getTask(component);
+            final Task task = getAraData().getTask(component);
             if (task == null) {
                 throw new IllegalArgumentException("Couldn't find component [" + component + "]");
             }
 
-            GenerateTask generateTask = task.getGenerateTask(target);
+            final GenerateTask generateTask = task.getGenerateTask(target);
             if (generateTask == null) {
                 throw new IllegalArgumentException("Couldn't find target [" + target + "]");
             }
 
-            List<Variable> variables = generateTask.getVariables(namespace);
-            for (Variable variable : variables) {
+            final List<Variable> variables = generateTask.getVariables(namespace);
+            for (final Variable variable : variables) {
                 if (variable.getValue() != null) {
                     propertyKeys.add(variable.getName());
                 }
@@ -230,22 +233,27 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return propertyKeys;
     }
 
+    @Override
     public String getEncoding() {
         return "utf-8";
     }
 
+    @Override
     public String getPropertyResolverDescription() {
         return "ARA";
     }
 
+    @Override
     public LinkedHashSet<Defect> checkForDuplicateEntry() {
         return new LinkedHashSet<Defect>();
     }
 
+    @Override
     public String getBeginToken() {
         return beginToken;
     }
 
+    @Override
     public String getEndToken() {
         return endToken;
     }
@@ -254,7 +262,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return araUrl;
     }
 
-    public void setAraUrl(String araUrl) {
+    public void setAraUrl(final String araUrl) {
         this.araUrl = araUrl;
     }
 
@@ -262,7 +270,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    public void setUserName(final String userName) {
         this.userName = userName;
     }
 
@@ -270,7 +278,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         if (password != null && password.startsWith("--10")) {
             this.password = Maxim.deMaxim(password);
         } else {
@@ -282,7 +290,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return runId;
     }
 
-    public void setRunId(Integer runId) {
+    public void setRunId(final Integer runId) {
         this.runId = runId;
     }
 
@@ -290,7 +298,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return target;
     }
 
-    public void setTarget(String target) {
+    public void setTarget(final String target) {
         this.target = target;
     }
 
@@ -298,7 +306,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return component;
     }
 
-    public void setComponent(String component) {
+    public void setComponent(final String component) {
         this.component = component;
     }
 
@@ -306,7 +314,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return namespace;
     }
 
-    public void setNamespace(String namespace) {
+    public void setNamespace(final String namespace) {
         this.namespace = namespace;
     }
 
@@ -314,7 +322,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return initilized;
     }
 
-    protected void setInitilized(boolean initilized) {
+    protected void setInitilized(final boolean initilized) {
         this.initilized = initilized;
     }
 
@@ -322,12 +330,12 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return araData;
     }
 
-    protected void setAraData(AraData araData) {
+    protected void setAraData(final AraData araData) {
         this.araData = araData;
     }
 
     @Override
-    public boolean propertyUsesToken(String property) {
+    public boolean propertyUsesToken(final String property) {
         logger.trace("Method: propertyUsesToken [{}]", property);
         if (getVariable(property).isEncrypted()) {
             return false;
@@ -335,7 +343,7 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return super.propertyUsesToken(property);
     }
 
-    public void setDecodePasswordWithBase64(Boolean decodePasswordWithBase64) {
+    public void setDecodePasswordWithBase64(final Boolean decodePasswordWithBase64) {
         this.decodePasswordWithBase64 = decodePasswordWithBase64;
     }
 
@@ -343,21 +351,21 @@ public class AraPropertyResolver extends BasePropertyResolver {
         return decodePasswordWithBase64;
     }
 
-    public void setBeginToken(String beginToken) {
+    public void setBeginToken(final String beginToken) {
         if (beginToken == null || beginToken.length() == 0) {
             throw new IllegalArgumentException("beginToken can't be null");
         }
         this.beginToken = beginToken;
     }
 
-    public void setEndToken(String endToken) {
+    public void setEndToken(final String endToken) {
         if (endToken == null || endToken.length() == 0) {
             throw new IllegalArgumentException("endToken can't be null");
         }
         this.endToken = endToken;
     }
 
-    public void setKeyValueSeparatorToken(String propertyKeyValueSeparator) {
+    public void setKeyValueSeparatorToken(final String propertyKeyValueSeparator) {
         this.propertyKeyValueSeparator = propertyKeyValueSeparator;
     }
 
