@@ -4,7 +4,7 @@
     <groupId>com.geewhiz.pacify</groupId>
     <artifactId>pacify.resolver.ara-resolver</artifactId>
     <!-- don't forget to change pacify reference -->
-    <version>develop</version>
+    <version>1.4.0</version>
     <name>com.geewhiz.pacify.resolver.ara-resolver</name>
     <packaging>jar</packaging>
 
